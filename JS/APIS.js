@@ -2,6 +2,15 @@ function recuperarPuntos(bearer_token, id_user) {
   var details = {
     'id': id_user,
   };
+  var greenIcon = L.icon({
+    iconUrl: 'img/camion.png',
+    iconSize: [14, 48], // size of the icon
+    shadowSize: [25, 32], // size of the shadow
+    iconAnchor: [11, 47], // point of the icon which will correspond to marker's location
+    shadowAnchor: [2, 31], // the same for the shadow
+    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+  var marker_actual;
   var formBody = [];
   for (var property in details) {
     var encodedKey = encodeURIComponent(property);
@@ -10,9 +19,9 @@ function recuperarPuntos(bearer_token, id_user) {
   }
   formBody = formBody.join("&");
   var bearer = 'Bearer ' + bearer_token;
-  console.log('Posting request to GitHub API...');
+  console.log('Obteniendo los datos de la API...');
   fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/last_location', {
-    async: true,
+    // async: true,
     crossDomain: true,
     method: 'post',
     headers: {
@@ -27,7 +36,12 @@ function recuperarPuntos(bearer_token, id_user) {
     data => {
       console.log('Created Gist:', data)
       var gejos = convertir(data)
-      L.geoJson(gejos).addTo(map)
+      let geoJsonlayer = L.geoJson(gejos, {
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup(feature.properties['movil'])
+        }
+      }).addTo(map)
+
     }
   );
 }
@@ -46,7 +60,7 @@ function recuperar() {
     formBody.push(encodedKey + "=" + encodedValue);
   }
   formBody = formBody.join("&");
-  console.log('Posting request to GitHub API...');
+  console.log('Obteniendo los datos de la API...');
   const username = 'apiroot';
   const password = 'api%#$fgr#$%';
   fetch('https://apiservice.servertrack.co:3006/api/app/login', {
@@ -93,9 +107,6 @@ function convertir(json) {
     features: [],
   };
   for (i = 0; i < json.data.length; i++) {
-    // if (window.CP.shouldStopExecution(1)) {
-    //   break;
-    // }
     geojson.features.push({
       "type": "Feature",
       "properties": {
@@ -116,7 +127,7 @@ function convertir(json) {
       }
     });
   }
-  // window.CP.exitedLoop(1);
-  var geoj = JSON.stringify(geojson, null, 2);
-  return geoj;
+
+  // var geoj = JSON.stringify(geojson, null, 2);
+  return geojson;
 }

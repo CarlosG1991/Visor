@@ -1,52 +1,4 @@
-function recuperarPuntos(bearer_token, id_user) {
-  var details = {
-    'id': id_user,
-  };
-  var greenIcon = L.icon({
-    iconUrl: 'img/camion.png',
-    iconSize: [14, 48], // size of the icon
-    shadowSize: [25, 32], // size of the shadow
-    iconAnchor: [11, 47], // point of the icon which will correspond to marker's location
-    shadowAnchor: [2, 31], // the same for the shadow
-    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
-  });
-  var marker_actual;
-  var formBody = [];
-  for (var property in details) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  var bearer = 'Bearer ' + bearer_token;
-  console.log('Obteniendo los datos de la API...');
-  fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/last_location', {
-    // async: true,
-    crossDomain: true,
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': bearer,
-      'content-length': "57",
-    },
-    body: formBody
-  }).then(
-    res => res.json()
-  ).then(
-    data => {
-      console.log('Created Gist:', data)
-      var gejos = convertir(data)
-      let geoJsonlayer = L.geoJson(gejos, {
-        onEachFeature: function(feature, layer) {
-          layer.bindPopup(feature.properties['movil'])
-        }
-      }).addTo(map)
-
-    }
-  );
-}
-
-function recuperar() {
+function apiLogin() {
   var details = {
     'password': 'raptortrack$$2017',
     'id_company': '1019',
@@ -73,15 +25,142 @@ function recuperar() {
       'content-length': "57",
     },
     body: formBody
-    // body: JSON.stringify(data)
   }).then(
     res => res.json()
   ).then(
     data => {
       for (i = 0; i < data.data.length; i++) {
         console.log('Created Gist:', data.data[i].token_api);
-        recuperarPuntos(data.data[i].token_api, data.data[i].id_user);
+        recuperarLastLocation(data.data[i].token_api, data.data[i].id_user);
+        // recuperarFollow(data.data[i].token_api, data.data[i].movil);
       }
+    }
+  );
+}
+
+function recuperarLastLocation(bearer_token, id_user) {
+  var details = {
+    'id': id_user,
+  };
+  var greenIcon = L.icon({
+    iconUrl: 'img/camion.png',
+    iconSize: [14, 48], // size of the icon
+    shadowSize: [25, 32], // size of the shadow
+    iconAnchor: [11, 47], // point of the icon which will correspond to marker's location
+    shadowAnchor: [2, 31], // the same for the shadow
+    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+  var marker_actual;
+  var formBody = [];
+  for (var property in details) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  var bearer = 'Bearer ' + bearer_token;
+  console.log('Obteniendo los datos de la API...');
+  fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/last_location', {
+    async: true,
+    crossDomain: true,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': bearer,
+      'content-length': "57",
+    },
+    body: formBody
+  }).then(
+    res => res.json()
+  ).then(
+    data => {
+      console.log('Created Gist:', data)
+      var gejos = convertir(data)
+      let geoJsonlayer = L.geoJson(gejos, {
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup(feature.properties['movil'])
+        }
+      }).addTo(map)
+
+    }
+  );
+}
+
+function recuperarFollow(bearer_token, movil) {
+  var details = {
+    'movil': movil,
+  };
+  var formBody = [];
+  for (var property in details) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  var bearer = 'Bearer ' + bearer_token;
+  console.log('Obteniendo los datos de la API...');
+  fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/follow ', {
+    async: true,
+    crossDomain: true,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': bearer,
+      'content-length': "57",
+    },
+    body: formBody
+  }).then(
+    res => res.json()
+  ).then(
+    data => {
+      console.log('Created Gist:', data)
+      var gejos = convertir(data)
+      let geoJsonlayer = L.geoJson(gejos, {
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup(feature.properties['movil'])
+        }
+      }).addTo(map)
+
+    }
+  );
+}
+
+function recuperarHistorial(bearer_token, movil, date) {
+  var details = {
+    'movil': movil,
+    'date': date,
+  };
+  var formBody = [];
+  for (var property in details) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  var bearer = 'Bearer ' + bearer_token;
+  console.log('Obteniendo los datos de la API...');
+  fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/history ', {
+    async: true,
+    crossDomain: true,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': bearer,
+      'content-length': "57",
+    },
+    body: formBody
+  }).then(
+    res => res.json()
+  ).then(
+    data => {
+      console.log('Created Gist:', data)
+      var gejos = convertir(data)
+      let geoJsonlayer = L.geoJson(gejos, {
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup(feature.properties['movil'])
+        }
+      }).addTo(map)
+
     }
   );
 }
@@ -127,7 +206,5 @@ function convertir(json) {
       }
     });
   }
-
-  // var geoj = JSON.stringify(geojson, null, 2);
   return geojson;
 }

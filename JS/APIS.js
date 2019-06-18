@@ -1,4 +1,7 @@
-function apiLogin() {
+var pass
+var movil
+
+function apiLogin(usuario, passw) {
   var details = {
     'password': 'raptortrack$$2017',
     'id_company': '1019',
@@ -15,6 +18,8 @@ function apiLogin() {
   console.log('Obteniendo los datos de la API...');
   const username = 'apiroot';
   const password = 'api%#$fgr#$%';
+  // const username = usuario
+  // const password = passw;
   fetch('https://apiservice.servertrack.co:3006/api/app/login', {
     async: true,
     crossDomain: true,
@@ -30,8 +35,10 @@ function apiLogin() {
   ).then(
     data => {
       for (i = 0; i < data.data.length; i++) {
+
         console.log('Created Gist:', data.data[i].token_api);
-        recuperarLastLocation(data.data[i].token_api, data.data[i].id_user);
+        document.form.submit();
+        // recuperarLastLocation(data.data[i].token_api, data.data[i].id_user);
         // recuperarFollow(data.data[i].token_api, data.data[i].movil);
       }
     }
@@ -78,10 +85,11 @@ function recuperarLastLocation(bearer_token, id_user) {
       var gejos = convertir(data)
       let geoJsonlayer = L.geoJson(gejos, {
         onEachFeature: function(feature, layer) {
-          layer.bindPopup(feature.properties['movil'])
+          pass = bearer_token
+          movil = feature.properties['movil']
+          layer.bindPopup("<a onclick='javascript:recuperarFollow(pass,movil)'>Click Seguir Vehiculo." + feature.properties['movil'] + "</a>")
         }
       }).addTo(map)
-
     }
   );
 }

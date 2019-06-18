@@ -16,6 +16,7 @@ var marker_actual;
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
 navigator.geolocation.getCurrentPosition(function(position) {
   marker_actual = L.marker([position.coords.latitude, position.coords.longitude], {
     icon: greenIcon

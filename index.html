@@ -2,23 +2,62 @@
 <html>
 
 <head>
-  <title>Single layer | CARTO</title>
+  <title>Login Visor Startel </title>
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
   <link rel="stylesheet" href="leaflet/leaflet.css" />
-  <!-- Load our styles -->
+  <!-- Carga de CSS-->
   <link href="CSS/styles.css" rel="stylesheet">
-  <script type="text/javascript" src="JS/kml.js"></script>
-
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/vendor/linearicons/style.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/demo.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+  <!-- Iconos  -->
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+  <!-- Carga de Metodos -->
+  <script src="JS/APIS.js"></script>
 </head>
 
-<body onLoad="setInterval('apiLogin()',5000);">
-  <div id="map"></div>
-  <script src="leaflet/leaflet.js"></script>
-  <script src="https://libs.cartocdn.com/carto.js/v4.1.11/carto.min.js"></script>
-  <script type="text/javascript" src="JS/kml.js"></script>
-  <script src="JS/mapa.js"></script>
-  <script src="JS/APIS.js"></script>
+<body>
+  <div id="wrapper">
+    <div class="vertical-align-wrap">
+      <div class="vertical-align-middle">
+        <div class="auth-box ">
+          <div class="left">
+            <div class="content">
+              <div class="header">
+                <!-- <div class="logo text-center"><img src="assets/img/logo-dark.png" alt="Klorofil Logo"></div> -->
+                <p class="lead">Ingresar Con tu cuenta</p>
+              </div>
+              <form class="form-auth-small" name=form action="mapa.html">
+                <div class="form-group">
+                  <label for="signin-email" class="control-label sr-only">Usuario</label>
+                  <input type="email" class="form-control" id="signin-email" placeholder="Usuario">
+                </div>
+                <div class="form-group">
+                  <label for="signin-password" class="control-label sr-only">Password</label>
+                  <input type="password" class="form-control" id="signin-password" placeholder="Password">
+                </div>
+                <!-- <button type="submit" class="btn btn-primary btn-lg btn-block">Ingresar</button> -->
+                <input onclick=apiLogin() class="btn btn-primary btn-lg btn-block" type=button value=Acceder>
+              </form>
+            </div>
+          </div>
+          <div class="right">
+            <div class="overlay"></div>
+            <div class="content text">
+              <h1 class="heading">Visor</h1>
+              <p>by The Develovers</p>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

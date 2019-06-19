@@ -1,5 +1,3 @@
-// This isn't necessary but it keeps the editor from thinking L and carto are typos
-/* global L, carto */
 var map = L.map('map', {
   center: [30, 0],
   zoom: 3
@@ -26,4 +24,3 @@ navigator.geolocation.getCurrentPosition(function(position) {
 }, function(err) {
   console.error(err);
 });
-// L.geoJson(con).addTo(map);

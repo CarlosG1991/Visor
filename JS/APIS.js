@@ -1,51 +1,20 @@
 var pass
 var movil
-
-function apiLogin(usuario, passw) {
-  var details = {
-    'password': 'raptortrack$$2017',
-    'id_company': '1019',
-    'login': 'root'
-  };
-
-  var formBody = [];
-  for (var property in details) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  console.log('Obteniendo los datos de la API...');
-  const username = 'apiroot';
-  const password = 'api%#$fgr#$%';
-  // const username = usuario
-  // const password = passw;
-  fetch('https://apiservice.servertrack.co:3006/api/app/login', {
-    async: true,
-    crossDomain: true,
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Basic ' + btoa(username + ":" + password),
-      'content-length': "57",
-    },
-    body: formBody
-  }).then(
-    res => res.json()
-  ).then(
-    data => {
-      for (i = 0; i < data.data.length; i++) {
-
-        console.log('Created Gist:', data.data[i].token_api);
-        document.form.submit();
-        // recuperarLastLocation(data.data[i].token_api, data.data[i].id_user);
-        // recuperarFollow(data.data[i].token_api, data.data[i].movil);
-      }
+var gejos = ''
+var removeMarkers = function() {
+  map.eachLayer(function(layer) {
+    if (layer.myTag && layer.myTag === "Grupos") {
+      map.removeLayer(layer)
     }
-  );
+  });
 }
 
-function recuperarLastLocation(bearer_token, id_user) {
+function recuperarLastLocation() {
+  var id_user = sessionStorage.getItem("id_user");
+  var bearer_token = sessionStorage.getItem("token");
+  if (gejos != '') {
+    removeMarkers();
+  }
   var details = {
     'id': id_user,
   };
@@ -82,11 +51,12 @@ function recuperarLastLocation(bearer_token, id_user) {
   ).then(
     data => {
       console.log('Created Gist:', data)
-      var gejos = convertir(data)
+      gejos = convertir(data)
       let geoJsonlayer = L.geoJson(gejos, {
         onEachFeature: function(feature, layer) {
           pass = bearer_token
           movil = feature.properties['movil']
+          layer.myTag = "Grupos"
           layer.bindPopup("<a onclick='javascript:recuperarFollow(pass,movil)'>Click Seguir Vehiculo." + feature.properties['movil'] + "</a>")
         }
       }).addTo(map)

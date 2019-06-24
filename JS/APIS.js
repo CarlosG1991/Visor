@@ -1,7 +1,6 @@
 var pass
 var movil
-var lat
-var long
+var alert
 var speed
 var a
 var br
@@ -59,21 +58,17 @@ function recuperarLastLocation() {
     data => {
       console.log('Created Gist:', data)
       gejos = convertir(data)
-      // console.log('Created Gist:', gejos)
       let geoJsonlayer = L.geoJson(gejos, {
         onEachFeature: function(feature, layer) {
           pass = bearer_token
           movil = feature.properties['movil']
-
-          lat = feature.geometry["coordinates"][1];
-          long = feature.geometry["coordinates"][0];
           speed = parseInt(feature.properties['speed'])
-          if (speed > 70) {
+          if (feature.properties['event'] != '') {
             a = document.createElement('a');
             br = document.createElement('br');
-            contenido = document.createTextNode("Exceso de Velocidad! " + movil);
+            contenido = document.createTextNode(feature.properties['event'] + " " + movil);
             a.appendChild(contenido);
-            a.setAttribute('onclick', 'zoom(lat,long)');
+            a.setAttribute('onclick', 'zoom(' + feature.geometry["coordinates"][1] + ',' + feature.geometry["coordinates"][0] + ')');
             contenedor.appendChild(a);
             contenedor.appendChild(br);
           }

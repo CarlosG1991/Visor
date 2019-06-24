@@ -1,7 +1,4 @@
-var map = L.map('map', {
-  center: [30, 0],
-  zoom: 3
-});
+// Declarar icono de geolocalizacion
 var greenIcon = L.icon({
   iconUrl: 'img/camion.png',
   iconSize: [14, 48], // size of the icon
@@ -10,11 +7,23 @@ var greenIcon = L.icon({
   shadowAnchor: [2, 31], // the same for the shadow
   popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
 });
+// Declarar Mapa
+var map = L.map('map', {
+  center: [30, 0],
+  zoom: 3
+});
+// Se cargarn las capas que se mostraran en el mapa
+var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+var baseMaps = {
+  "<span style='color: gray'>OSM</span>": osm,
+  // "<span style='color: gray'>Putas</span>": osm
+};
+var overlayMaps = {
+  // "Paradas": Paradas
+};
+map.addControl(new L.control.layers(baseMaps, overlayMaps).addTo(map));
+// geolocalizacion
 var marker_actual;
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
-
 navigator.geolocation.getCurrentPosition(function(position) {
   marker_actual = L.marker([position.coords.latitude, position.coords.longitude], {
     icon: greenIcon

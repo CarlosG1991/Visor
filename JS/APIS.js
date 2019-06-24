@@ -1,5 +1,11 @@
 var pass
 var movil
+var lat
+var long
+var speed
+var a
+var br
+var contenido
 var gejos = ''
 var removeMarkers = function() {
   map.eachLayer(function(layer) {
@@ -12,6 +18,7 @@ var removeMarkers = function() {
 function recuperarLastLocation() {
   var id_user = sessionStorage.getItem("id_user");
   var bearer_token = sessionStorage.getItem("token");
+  var contenedor = document.getElementById("alertas");
   if (gejos != '') {
     removeMarkers();
   }
@@ -52,16 +59,36 @@ function recuperarLastLocation() {
     data => {
       console.log('Created Gist:', data)
       gejos = convertir(data)
+      // console.log('Created Gist:', gejos)
       let geoJsonlayer = L.geoJson(gejos, {
         onEachFeature: function(feature, layer) {
           pass = bearer_token
           movil = feature.properties['movil']
+
+          lat = feature.geometry["coordinates"][1];
+          long = feature.geometry["coordinates"][0];
+          speed = parseInt(feature.properties['speed'])
+          if (speed > 70) {
+            a = document.createElement('a');
+            br = document.createElement('br');
+            contenido = document.createTextNode("Exceso de Velocidad! " + movil);
+            a.appendChild(contenido);
+            a.setAttribute('onclick', 'zoom(lat,long)');
+            contenedor.appendChild(a);
+            contenedor.appendChild(br);
+          }
           layer.myTag = "Grupos"
           layer.bindPopup("<a onclick='javascript:recuperarFollow(pass,movil)'>Click Seguir Vehiculo." + feature.properties['movil'] + "</a>")
         }
       }).addTo(map)
     }
   );
+}
+
+function zoom(latitud, longitud) {
+  console.log(latitud);
+  console.log(longitud);
+  map.setView([latitud, longitud], 18);
 }
 
 function recuperarFollow(bearer_token, movil) {
@@ -153,9 +180,8 @@ function obtener() {
       return data.json()
     })
     .then(data => {
-
       console.log(data)
-    });
+    })
 }
 
 function convertir(json) {

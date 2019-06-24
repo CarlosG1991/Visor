@@ -5,6 +5,7 @@
   <title>Visor Startel </title>
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
+
   <!-- Load our styles -->
   <link href="CSS/styles.css" rel="stylesheet">
   <link rel="stylesheet" href="leaflet/leaflet.css" />
@@ -18,6 +19,8 @@
   <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
   <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
   <script src="JS/Login.js"></script>
+  <!-- mapas google  -->
+
 </head>
 
 <body onLoad="setInterval('recuperarLastLocation()',5000);">
@@ -50,37 +53,71 @@
       <div class="sidebar-scroll">
         <nav>
           <ul class="nav">
-            <li><a href="index.html" class=""><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
-            <li><a href="elements.html" class=""><i class="lnr lnr-code"></i> <span>Elements</span></a></li>
-            <li><a href="charts.html" class=""><i class="lnr lnr-chart-bars"></i> <span>Charts</span></a></li>
-            <li><a href="panels.html" class="active"><i class="lnr lnr-cog"></i> <span>Panels</span></a></li>
-            <li><a href="notifications.html" class=""><i class="lnr lnr-alarm"></i> <span>Notifications</span></a></li>
+            <li><a href="mapa.html" class=""><i class="lnr lnr-home"></i> <span>Mapa</span></a></li>
             <li>
-              <a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Pages</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+              <a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Configuraciones</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
               <div id="subPages" class="collapse ">
                 <ul class="nav">
-                  <li><a href="page-profile.html" class="">Profile</a></li>
-                  <li><a href="page-login.html" class="">Login</a></li>
-                  <li><a href="page-lockscreen.html" class="">Lockscreen</a></li>
+                  <li><a href="page-profile.html" class="">Rutas</a></li>
                 </ul>
               </div>
             </li>
-            <li><a href="tables.html" class=""><i class="lnr lnr-dice"></i> <span>Tables</span></a></li>
-            <li><a href="typography.html" class=""><i class="lnr lnr-text-format"></i> <span>Typography</span></a></li>
-            <li><a href="icons.html" class=""><i class="lnr lnr-linearicons"></i> <span>Icons</span></a></li>
           </ul>
         </nav>
       </div>
     </div>
-
     <div class="main">
+      <div class="main-content">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="panel panel-headline" id="map">
+              <div class="panel-heading">
+                <!-- <h3 class="panel-title">MAPA</h3> -->
+              </div>
+              <div class="panel-body">
+                <div>
+                </div>
+              </div>
+
+            </div>
+            <!-- <div class="vertical-align-wrap">
+              <div class="vertical-align-middle" id="map">
+                <div>
+                </div>
+              </div>
+            </div> -->
+          </div>
+          <div class="row">
+            <div id="panel-scrolling-demo" class="panel">
+              <div class="panel-heading">
+                <h3 class="panel-title">Alertas</h3>
+              </div>
+              <div class="panel-body" id="alertas">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="main">
       <div class="vertical-align-wrap">
         <div class="vertical-align-middle" id="map">
           <div>
           </div>
         </div>
+        <div>
+          <div id="panel-scrolling-demo" class="panel">
+            <div class="panel-heading">
+              <h3 class="panel-title">Alertas</h3>
+            </div>
+            <div class="panel-body" id="alertas">
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </div> -->
   </div>
   <script src="leaflet/leaflet.js"></script>
   <script src="JS/mapa.js"></script>

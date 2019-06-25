@@ -1,6 +1,6 @@
 // Declarar icono de geolocalizacion
 var greenIcon = L.icon({
-  iconUrl: 'img/camion.png',
+  iconUrl: 'img/vehiculo_01/i0.png',
   iconSize: [14, 48], // size of the icon
   shadowSize: [25, 32], // size of the shadow
   iconAnchor: [11, 47], // point of the icon which will correspond to marker's location
@@ -16,7 +16,7 @@ var map = L.map('map', {
 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 var baseMaps = {
   "<span style='color: gray'>OSM</span>": osm,
-  // "<span style='color: gray'>Putas</span>": osm
+  // "<span style='color: gray'>000</span>": osm
 };
 var overlayMaps = {
   // "Paradas": Paradas

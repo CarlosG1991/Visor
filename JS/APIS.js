@@ -245,6 +245,7 @@ function recuperarUsuarioMovil() {
       return data.json()
     })
     .then(data => {
+      guardarUsuarioMovil(data)
       console.log(data)
     })
 }
@@ -259,6 +260,7 @@ function recuperarGrupoMovil() {
       return data.json()
     })
     .then(data => {
+      guardarGrupoMovil(data)
       console.log(data)
     })
 }
@@ -274,7 +276,7 @@ function recuperarMoviles() {
     })
     .then(data => {
       guardarMovil(data);
-      // console.log(data)
+      console.log(data)
 
     })
 }
@@ -290,6 +292,7 @@ function recuperarDispositivos() {
     })
     .then(data => {
       guardarDispositivos(data);
+      console.log(data)
     })
 }
 
@@ -303,6 +306,7 @@ function recuperarUsuarios() {
       return data.json()
     })
     .then(data => {
+      guardarUsuarios(data)
       console.log(data)
     })
 }
@@ -317,7 +321,7 @@ function recuperarPerfiles() {
       return data.json()
     })
     .then(data => {
-      guardarPerfiles(data)
+      // guardarPerfiles(data)
       console.log(data)
     })
 }
@@ -332,8 +336,8 @@ function recuperarGrupos() {
       return data.json()
     })
     .then(data => {
+      // guardarGrupos(data)
       console.log(data)
-      guardarGrupos(data)
     })
 }
 

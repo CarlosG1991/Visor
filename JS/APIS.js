@@ -260,7 +260,7 @@ function recuperarGrupoMovil() {
       return data.json()
     })
     .then(data => {
-      guardarGrupoMovil(data)
+      // guardarGrupoMovil(data)
       console.log(data)
     })
 }

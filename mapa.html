@@ -5,10 +5,15 @@
   <title>Visor Startel </title>
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
-
+  <style>
+    .map {
+      height: 400px;
+      width: 100%;
+    }
+  </style>
   <!-- Load our styles -->
-  <link rel="stylesheet" href="CSS/styles.css" />
-  <link rel="stylesheet" href="leaflet/leaflet.css" />
+  <!-- <link rel="stylesheet" href="CSS/styles.css" /> -->
+  <!-- <link rel="stylesheet" href="leaflet/leaflet.css" /> -->
   <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="assets/vendor/linearicons/style.css">
@@ -23,8 +28,9 @@
 
 </head>
 
-<body onLoad="setInterval('recuperarLastLocation()',5000);">
+<!-- <body onLoad="setInterval('recuperarLastLocation()',5000);"> -->
 
+<body>
   <div id="wrapper">
     <!-- NAVBAR -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -71,23 +77,13 @@
         <div class="container-fluid">
           <div class="row">
 
-            <div class="panel panel-headline" id="map">
+            <div class="panel panel-headline">
               <div class="panel-heading">
                 <!-- <h3 class="panel-title">MAPA</h3> -->
               </div>
               <div class="panel-body">
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
-                </br>
+                <div id="map" class="map">
+                </div>
               </div>
             </div>
           </div>
@@ -104,13 +100,15 @@
       </div>
     </div>
   </div>
-  <script src="leaflet/leaflet.js"></script>
+  <!-- <script src="leaflet/leaflet.js"></script> -->
   <script src="JS/mapa.js"></script>
   <script src="JS/APIS.js"></script>
   <script src="assets/vendor/jquery/jquery.min.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
   <script src="assets/scripts/klorofil-common.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApyY1ItLKTB94QXe35b2ZQFxlQipZWW5E&callback=initMap">
+  </script>
 </body>
 
 </html>

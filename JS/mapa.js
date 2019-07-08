@@ -1,23 +1,30 @@
+var map
+var infoMarker
+
 function initMap() {
+  var pos
+  var trafficLayer = new google.maps.TrafficLayer();
   var myLatlng = new google.maps.LatLng(-34.397, 150.644);
   var mapOptions = {
     zoom: 8,
     center: myLatlng,
     mapTypeId: 'satellite'
   };
-  var map = new google.maps.Map(document.getElementById('map'),
+  map = new google.maps.Map(document.getElementById('map'),
     mapOptions);
   var infoWindow = new google.maps.InfoWindow;
-
+  infoMarker = new google.maps.Marker;
+  trafficLayer.setMap(map);
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = {
+      pos = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
-
+      // myLatlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
       infoWindow.setPosition(pos);
-      infoWindow.setContent('Location found.');
+      infoMarker.setPosition(pos);
+      // infoWindow.setContent('Location found.');
       infoWindow.open(map);
       map.setCenter(pos);
     }, function() {
@@ -27,7 +34,15 @@ function initMap() {
     // Browser doesn't support Geolocation
     handleLocationError(false, infoWindow, map.getCenter());
   }
+  // var marker = new google.maps.Marker({
+  //   position: {
+  //     myLatlng
+  //   },
+  //   map: map,
+  //   title: 'Acuario de Gijón'
+  // });
 }
+
 // Declarar icono de geolocalizacion
 // var greenIcon = L.icon({
 //   iconUrl: 'img/vehiculo_01/i0.png',

@@ -2,6 +2,7 @@ var map
 var infoMarker
 
 function initMap() {
+  console.log(sessionStorage.getItem("last_name"));
   var pos
   var trafficLayer = new google.maps.TrafficLayer();
   var myLatlng = new google.maps.LatLng(-34.397, 150.644);

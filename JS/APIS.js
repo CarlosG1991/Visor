@@ -7,6 +7,7 @@ var br
 var contenido
 var gejos = ''
 var markers = [];
+var currentdate = new Date();
 
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
@@ -18,21 +19,10 @@ function addMarker(location) {
   var contentString = '<div id="content">' +
     '<div id="siteNotice">' +
     '</div>' +
-    '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
     '<div id="bodyContent">' +
-    '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-    'sandstone rock formation in the southern part of the ' +
-    'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
-    'south west of the nearest large town, Alice Springs; 450&#160;km ' +
-    '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major ' +
-    'features of the Uluru - Kata Tjuta National Park. Uluru is ' +
-    'sacred to the Pitjantjatjara and Yankunytjatjara, the ' +
-    'Aboriginal people of the area. It has many springs, waterholes, ' +
-    'rock caves and ancient paintings. Uluru is listed as a World ' +
-    'Heritage Site.</p>' +
-    '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-    'https://en.wikipedia.org/w/index.php?title=Uluru</a> ' +
-    '(last visited June 22, 2009).</p>' +
+    '<p><a onclick="javascript:follow(movil)">' +
+    'Seguir Vehiculo</a> ' +
+    '</p>' +
     '</div>' +
     '</div>';
   var infowindow = new google.maps.InfoWindow({
@@ -41,7 +31,8 @@ function addMarker(location) {
 
   var marker = new google.maps.Marker({
     position: location,
-    map: map
+    map: map,
+    icon: 'img/vehiculo_01/i0.png'
   });
   marker.addListener('click', function() {
     infowindow.open(map, marker);
@@ -60,7 +51,7 @@ function deleteMarkers() {
 
 function recuperarLastLocation() {
   var id_user = '-1'
-  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjI2MDg3MDUsImV4cCI6MTU2MjYxOTUwNX0.8jTrzHTP_PATTGHn689XGgzceRGldvvLsvoH1RmQ4c8'
+  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjI4NTE3NjAsImV4cCI6MTU2Mjg2MjU2MH0.V4Un-xdHUrUd8odsod5FdpOZJaD9x7j0YMno1gP8W5c'
   var contenedor = document.getElementById("alertas");
   if (gejos != '') {
     deleteMarkers();
@@ -68,14 +59,6 @@ function recuperarLastLocation() {
   var details = {
     'id': id_user,
   };
-  // var greenIcon = L.icon({
-  //   iconUrl: 'img/camion.png',
-  //   iconSize: [14, 48], // size of the icon
-  //   shadowSize: [25, 32], // size of the shadow
-  //   iconAnchor: [11, 47], // point of the icon which will correspond to marker's location
-  //   shadowAnchor: [2, 31], // the same for the shadow
-  //   popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
-  // });
   var marker_actual;
   var formBody = [];
   for (var property in details) {
@@ -101,7 +84,6 @@ function recuperarLastLocation() {
   ).then(
     data => {
       console.log('Created Gist:', data)
-      gejos = convertir(data)
       for (i = 0; i < data.data.length; i++) {
         movil = data.data[i].movil
         a = document.createElement('a');
@@ -118,37 +100,37 @@ function recuperarLastLocation() {
         addMarker(outerCoords)
         map.data.loadGeoJson(outerCoords);
       }
-
-
-      // map.data.setStyle(function(feature) {
-      //   return /** @type {google.maps.Data.StyleOptions} */ ({
-      //     fillColor: feature.getProperty('color'),
-      //     strokeWeight: 1
-      //   });
-      // });
-
-
-      // let geoJsonlayer = L.geoJson(gejos, {
-      //   onEachFeature: function(feature, layer) {
-      //     pass = bearer_token
-      //     movil = feature.properties['movil']
-      //     speed = parseInt(feature.properties['speed'])
-      //     map.data.loadGeoJson(gejos);
-      //     // if (feature.properties['event'] != '') {
-      //     //   a = document.createElement('a');
-      //     //   br = document.createElement('br');
-      //     //   contenido = document.createTextNode(feature.properties['event'] + " " + movil);
-      //     //   a.appendChild(contenido);
-      //     //   a.setAttribute('onclick', 'zoom(' + feature.geometry["coordinates"][1] + ',' + feature.geometry["coordinates"][0] + ')');
-      //     //   contenedor.appendChild(a);
-      //     //   contenedor.appendChild(br);
-      //     // }
-      //     // layer.myTag = "Grupos"
-      //     // layer.bindPopup("<a onclick='javascript:recuperarFollow(pass,movil)'>Click Seguir Vehiculo." + feature.properties['movil'] + "</a>")
-      //   }
-      // }).addTo(map)
+      var markerCluster = new MarkerClusterer(map, markers, {
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+      });
     }
   );
+}
+
+function follow(movil) {
+  var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
+    "-" + currentdate.getDay() + "T" +
+    currentdate.getHours() + ":" +
+    currentdate.getMinutes() + ":" + currentdate.getSeconds();
+  fetch('https://api.gservicetrack.com/follow/raptortrack?limit=25&start=0&movil=' + movil + '&date>=' + fecha, {
+      headers: {
+        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+      }
+    })
+    .then(data => {
+      return data.json()
+    })
+    .then(data => {
+      deleteMarkers();
+      console.log('Created Gist:', data)
+      for (i = 0; i < data.data.length; i++) {
+        var outerCoords = {
+          lat: data.data[i].lat,
+          lng: data.data[i].lon
+        };
+        addMarker(outerCoords)
+      }
+    })
 }
 
 function zoom(latitud, longitud) {
@@ -161,44 +143,6 @@ function zoom(latitud, longitud) {
   map.fitBounds(bounds);
 }
 
-function recuperarFollow(bearer_token, movil) {
-  var details = {
-    'movil': movil,
-  };
-  var formBody = [];
-  for (var property in details) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  var bearer = 'Bearer ' + bearer_token;
-  console.log('Obteniendo los datos de la API...');
-  fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/follow ', {
-    async: true,
-    crossDomain: true,
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': bearer,
-      'content-length': "57",
-    },
-    body: formBody
-  }).then(
-    res => res.json()
-  ).then(
-    data => {
-      console.log('Created Gist:', data)
-      var gejos = convertir(data)
-      let geoJsonlayer = L.geoJson(gejos, {
-        onEachFeature: function(feature, layer) {
-          layer.bindPopup(feature.properties['movil'])
-        }
-      }).addTo(map)
-
-    }
-  );
-}
 
 function recuperarHistorial(bearer_token, movil, date) {
   var details = {
@@ -430,39 +374,7 @@ function ultimaPosicion(movil, fecha) {
     })
 }
 
-function follow(movil, fecha) {
-  fetch('https://api.gservicetrack.com/follow/raptortrack?limit=25&start=0&movil=' + movil + '&date>=' + fecha, {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      removeMarkers();
-      console.log('Created Gist:', data)
-      gejos = convertir(data)
-      let geoJsonlayer = L.geoJson(gejos, {
-        onEachFeature: function(feature, layer) {
-          pass = bearer_token
-          movil = feature.properties['movil']
-          speed = parseInt(feature.properties['speed'])
-          if (feature.properties['event'] != '') {
-            a = document.createElement('a');
-            br = document.createElement('br');
-            contenido = document.createTextNode(feature.properties['event'] + " " + movil);
-            a.appendChild(contenido);
-            a.setAttribute('onclick', 'zoom(' + feature.geometry["coordinates"][1] + ',' + feature.geometry["coordinates"][0] + ')');
-            contenedor.appendChild(a);
-            contenedor.appendChild(br);
-          }
-          layer.myTag = "Grupos"
-          layer.bindPopup("<a onclick='javascript:recuperarFollow(pass,movil)'>Click Seguir Vehiculo." + feature.properties['movil'] + "</a>")
-        }
-      }).addTo(map)
-    })
-}
+
 
 function convertir(json) {
   var geojson = {

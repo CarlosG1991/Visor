@@ -47,7 +47,7 @@
 function apiLogin() {
   var password = document.form.password.value;
   var username = document.form.login.value;
-  fetch('http://192.168.1.22:8080/web_service/login_usuarios.php?mail=' + username + '&pass=' + password)
+  fetch(ruta + '/web_service/login_usuarios.php?mail=' + username + '&pass=' + password)
     .then(data => {
       return data.json()
     })

@@ -2,7 +2,7 @@ var map
 var infoMarker
 
 function initMap() {
-  console.log(sessionStorage.getItem("last_name"));
+  cargarAsignados();
   var pos
   var trafficLayer = new google.maps.TrafficLayer();
   var myLatlng = new google.maps.LatLng(-34.397, 150.644);
@@ -16,66 +16,43 @@ function initMap() {
   var infoWindow = new google.maps.InfoWindow;
   infoMarker = new google.maps.Marker;
   trafficLayer.setMap(map);
+  var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingControlOptions: {
+      drawingModes: ['circle']
+    }
+  });
+  drawingManager.setMap(map);
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       pos = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
-      // myLatlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
       infoWindow.setPosition(pos);
       infoMarker.setPosition(pos);
-      // infoWindow.setContent('Location found.');
       infoWindow.open(map);
       map.setCenter(pos);
     }, function() {
       handleLocationError(true, infoWindow, map.getCenter());
     });
   } else {
-    // Browser doesn't support Geolocation
     handleLocationError(false, infoWindow, map.getCenter());
   }
-  // var marker = new google.maps.Marker({
-  //   position: {
-  //     myLatlng
-  //   },
-  //   map: map,
-  //   title: 'Acuario de Gijón'
-  // });
 }
 
-// Declarar icono de geolocalizacion
-// var greenIcon = L.icon({
-//   iconUrl: 'img/vehiculo_01/i0.png',
-//   iconSize: [14, 48], // size of the icon
-//   shadowSize: [25, 32], // size of the shadow
-//   iconAnchor: [11, 47], // point of the icon which will correspond to marker's location
-//   shadowAnchor: [2, 31], // the same for the shadow
-//   popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
-// });
-// // Declarar Mapa
-// var map = L.map('map', {
-//   center: [30, 0],
-//   zoom: 3
-// });
-// // Se cargarn las capas que se mostraran en el mapa
-// var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-// var baseMaps = {
-//   "<span style='color: gray'>OSM</span>": osm,
-//   // "<span style='color: gray'>000</span>": osm
-// };
-// var overlayMaps = {
-//   // "Paradas": Paradas
-// };
-// map.addControl(new L.control.layers(baseMaps, overlayMaps).addTo(map));
-// // geolocalizacion
-// var marker_actual;
-// navigator.geolocation.getCurrentPosition(function(position) {
-//   marker_actual = L.marker([position.coords.latitude, position.coords.longitude], {
-//     icon: greenIcon
-//   }).addTo(map);
-//   marker_actual.bindPopup('Tu estas aqui').openPopup();
-//   map.setView([position.coords.latitude, position.coords.longitude], 18);
-// }, function(err) {
-//   console.error(err);
-// });
+function cargarAsignados() {
+  var moviles_asignados = sessionStorage.getItem("movil_assign_user");
+  var arrayMovil = moviles_asignados.split(', ');
+  var ul, a, contenido;
+  var asig = document.getElementById('asignados');
+  for (var i = 0; i < arrayMovil.length; i++) {
+    ul = document.createElement('ul');
+    a = document.createElement('a');
+    contenido = document.createTextNode(arrayMovil[i]);
+    a.appendChild(contenido);
+    // a.setAttribute('onclick', 'zoom(' + data.data[i].lat + ',' + data.data[i].lon + ')');
+    ul.appendChild(a);
+    asig.appendChild(ul);
+    console.log(arrayMovil[i]);
+  }
+}

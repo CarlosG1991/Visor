@@ -35,7 +35,7 @@
                 <!-- <div class="logo text-center"><img src="assets/img/logo-dark.png" alt="Klorofil Logo"></div> -->
                 <p class="lead">Ingresar Con tu cuenta</p>
               </div>
-              <form class="form-auth-small" name=form action="mapa.html">
+              <form class="form-auth-small" name=form action="mapa.html" method="post">
                 <div class="form-group">
                   <label for="signin-email" class="control-label sr-only">Usuario</label>
                   <input type="email" class="form-control" id="signin-email" placeholder="Usuario" name=login>
@@ -44,9 +44,7 @@
                   <label for="signin-password" class="control-label sr-only">Password</label>
                   <input type="password" class="form-control" id="signin-password" placeholder="Password" name=password>
                 </div>
-                <!-- <button type="submit" class="btn btn-primary btn-lg btn-block">Ingresar</button> -->
                 <input onclick=apiLogin() class="btn btn-primary btn-lg btn-block" type=button value=Acceder>
-                <!-- <input onclick=recuperarGrupoMovil() class="btn btn-primary btn-lg btn-block" type=button value=LLamarApi> -->
               </form>
             </div>
           </div>

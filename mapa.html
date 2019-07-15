@@ -64,6 +64,14 @@
           <ul class="nav">
             <li><a href="mapa.html" class=""><i class="lnr lnr-home"></i> <span>Mapa</span></a></li>
             <li>
+              <a href="#subPages2" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Vehiculos Asignados</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+              <div id="subPages2" class="collapse ">
+                <ul class="nav" id="asignados">
+
+                </ul>
+              </div>
+            </li>
+            <li>
               <a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Configuraciones</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
               <div id="subPages" class="collapse ">
                 <ul class="nav">
@@ -112,7 +120,7 @@
   <script src="assets/scripts/klorofil-common.js"></script>
   <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
   </script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApyY1ItLKTB94QXe35b2ZQFxlQipZWW5E&callback=initMap">
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApyY1ItLKTB94QXe35b2ZQFxlQipZWW5E&callback=initMap&libraries=drawing">
   </script>
 </body>
 

@@ -2,15 +2,13 @@ function guardarDispositivos(data) {
   for (var item in data) {
     if (item == 'data') {
       if (data[item].length != 0) {
-        for (x = 0; x < data[item].length; x++) {
-          fetch(ruta + '/web_service/insert_Dispositivo.php?Id=' + data[item][x].id + '&state=' + data[item][x].state + '&device=' + data[item][x].device + '&imei=' + data[item][x].imei + '&purchase_date=' + data[item][x].purchase_date + '&brand=' + data[item][x].brand + '&model=' + data[item][x].model + '&provider=' + data[item][x].provider + '&phone=' + data[item][x].phone + '&description=' + data[item][x].description + '&operator=' + data[item][x].operator + '&sim_capacity=' + data[item][x].sim_capacity + '&sim_serial=' + data[item][x].sim_serial + '&apn=' + data[item][x].apn)
-            .then(data => {
-              return data.json()
-            })
-            .then(data => {
-              console.log(data)
-            })
-        }
+        fetch(ruta + '/web_service/insert_Dispositivo.php?Data=' + data[item])
+          .then(data => {
+            return data.json()
+          })
+          .then(data => {
+            console.log(data)
+          })
       }
     }
   }

@@ -73,10 +73,11 @@ function apiLogin() {
 function cerrarSesion() {
   var r = confirm("Seguro Desea Cerrar Sesion");
   if (r == true) {
-    sessionStorage.getItem("Usuario", "");
-    sessionStorage.getItem("password", "");
-    sessionStorage.getItem("id_user", "");
-    sessionStorage.getItem("token", "");
+    sessionStorage.setItem("name", "");
+    sessionStorage.setItem("last_name", "");
+    sessionStorage.setItem("movil_assign_user", "");
+    sessionStorage.setItem("group_name", "");
+    sessionStorage.setItem("profile_name", "");
     window.location.href = "index.html";
   }
 }

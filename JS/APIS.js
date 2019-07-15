@@ -51,7 +51,7 @@ function deleteMarkers() {
 
 function recuperarLastLocation() {
   var id_user = '-1'
-  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjI4NTE3NjAsImV4cCI6MTU2Mjg2MjU2MH0.V4Un-xdHUrUd8odsod5FdpOZJaD9x7j0YMno1gP8W5c'
+  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjI5NjY2ODAsImV4cCI6MTU2Mjk3NzQ4MH0.fyOEaOEMkD0oRNAtM04ncWBPqBp2SeSA_HEKKtt4dQk'
   var contenedor = document.getElementById("alertas");
   if (gejos != '') {
     deleteMarkers();

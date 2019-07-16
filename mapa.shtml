@@ -27,12 +27,11 @@
 
 </head>
 
-<body onLoad="setInterval('recuperarLastLocation()',20000);">
+<body>
 
   <!-- <body> -->
   <div id="wrapper">
     <!-- NAVBAR -->
-
     <!--#include file="menu.html" -->
     <div class="main">
       <div class="main-content">

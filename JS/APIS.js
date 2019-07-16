@@ -1,13 +1,8 @@
-var pass
-var movil
-var alert
-var speed
-var a
-var br
-var contenido
+var movil, a, br, contenido
 var gejos = ''
 var markers = [];
 var currentdate = new Date();
+var control = 0;
 
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
@@ -32,12 +27,28 @@ function addMarker(location) {
   var marker = new google.maps.Marker({
     position: location,
     map: map,
-    icon: 'img/vehiculo_01/i0.png'
+    icon: 'img/iconos/Car1.png'
   });
   marker.addListener('click', function() {
     infowindow.open(map, marker);
   });
   markers.push(marker);
+}
+
+function localizar() {
+  console.log(markers);
+  var latlngbounds = new google.maps.LatLngBounds();
+  for (var i = 0; i < markers.length; i++) {
+    latlngbounds.extend(markers[i].position);
+  }
+  map.fitBounds(latlngbounds);
+  new google.maps.Rectangle({
+    bounds: latlngbounds,
+    map: map,
+    fillColor: "#000000",
+    fillOpacity: 0.2,
+    strokeWeight: 0
+  });
 }
 
 function clearMarkers() {
@@ -51,7 +62,7 @@ function deleteMarkers() {
 
 function recuperarLastLocation() {
   var id_user = '-1'
-  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjI5NjY2ODAsImV4cCI6MTU2Mjk3NzQ4MH0.fyOEaOEMkD0oRNAtM04ncWBPqBp2SeSA_HEKKtt4dQk'
+  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjMyMDYzMDUsImV4cCI6MTU2MzIxNzEwNX0.htPjaBm6OuY2MDfp_O2_7bPfUrA4h7IcXSEz9XWetT0'
   var contenedor = document.getElementById("alertas");
   if (gejos != '') {
     deleteMarkers();
@@ -69,45 +80,50 @@ function recuperarLastLocation() {
   formBody = formBody.join("&");
   var bearer = 'Bearer ' + bearer_token;
   console.log('Obteniendo los datos de la API...');
-  fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/last_location', {
-    async: true,
-    crossDomain: true,
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': bearer,
-      'content-length': "57",
-    },
-    body: formBody
-  }).then(
-    res => res.json()
-  ).then(
-    data => {
-      console.log('Created Gist:', data)
-      for (i = 0; i < data.data.length; i++) {
-        movil = data.data[i].movil
-        a = document.createElement('a');
-        br = document.createElement('br');
-        contenido = document.createTextNode(data.data[i].event + " " + movil);
-        a.appendChild(contenido);
-        a.setAttribute('onclick', 'zoom(' + data.data[i].lat + ',' + data.data[i].lon + ')');
-        contenedor.appendChild(a);
-        contenedor.appendChild(br);
-        var outerCoords = {
-          lat: data.data[i].lat,
-          lng: data.data[i].lon
-        };
-        addMarker(outerCoords)
-        map.data.loadGeoJson(outerCoords);
+  if (control == 0) {
+
+    fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/last_location', {
+      async: true,
+      crossDomain: true,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': bearer,
+        'content-length': "57",
+      },
+      body: formBody
+    }).then(
+      res => res.json()
+    ).then(
+      data => {
+        console.log('Created Gist:', data)
+        for (i = 0; i < data.data.length; i++) {
+          movil = data.data[i].movil
+          a = document.createElement('a');
+          br = document.createElement('br');
+          contenido = document.createTextNode(data.data[i].event + " " + movil);
+          a.appendChild(contenido);
+          a.setAttribute('onclick', 'zoom(' + data.data[i].lat + ',' + data.data[i].lon + ')');
+          contenedor.appendChild(a);
+          contenedor.appendChild(br);
+          var outerCoords = {
+            lat: data.data[i].lat,
+            lng: data.data[i].lon
+          };
+          addMarker(outerCoords)
+          map.data.loadGeoJson(outerCoords);
+        }
+        var markerCluster = new MarkerClusterer(map, markers, {
+          imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+        });
       }
-      var markerCluster = new MarkerClusterer(map, markers, {
-        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
-      });
-    }
-  );
+    );
+  }
+
 }
 
 function follow(movil) {
+  control = 1;
   var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
     "-" + currentdate.getDay() + "T" +
     currentdate.getHours() + ":" +
@@ -121,14 +137,14 @@ function follow(movil) {
       return data.json()
     })
     .then(data => {
-      deleteMarkers();
       console.log('Created Gist:', data)
       for (i = 0; i < data.data.length; i++) {
         var outerCoords = {
           lat: data.data[i].lat,
           lng: data.data[i].lon
         };
-        addMarker(outerCoords)
+        addMarker(outerCoords);
+        map.data.loadGeoJson(outerCoords);
       }
     })
 }

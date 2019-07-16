@@ -1,0 +1,51 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="brand">
+    <a href="index.html"><img src="assets/img/logo-dark.png" alt="Klorofil Logo" class="img-responsive logo"></a>
+  </div>
+  <div class="container-fluid">
+    <div class="navbar-btn">
+      <button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
+    </div>
+    <div class="navbar-btn navbar-btn-right">
+    </div>
+    <div id="navbar-menu">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span>
+              <script>
+                sessionStorage.getItem("last_name");
+              </script>
+            </span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a onclick="cerrarSesion()"><i class="lnr lnr-exit"></i> <span>Cerrar Sesion</span></a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div id="sidebar-nav" class="sidebar">
+  <div class="sidebar-scroll">
+    <nav>
+      <ul class="nav">
+        <li><a href="mapa.html" class=""><i class="lnr lnr-home"></i> <span>Mapa</span></a></li>
+        <li>
+          <a href="#subPages2" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Vehiculos Asignados</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+          <div id="subPages2" class="collapse ">
+            <ul class="nav" id="asignados">
+
+            </ul>
+          </div>
+        </li>
+        <li>
+          <a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Configuraciones</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+          <div id="subPages" class="collapse ">
+            <ul class="nav">
+              <li><a href="page-profile.html" class="">Rutas</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

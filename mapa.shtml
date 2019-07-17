@@ -11,19 +11,10 @@
       width: 100%;
     }
   </style>
-  <!-- Load our styles -->
-  <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="assets/vendor/linearicons/style.css">
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/demo.css">
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-  <!-- ICONS -->
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
-  <script src="JS/Login.js"></script>
-  <script src="JS/Config.js"></script>
-  <script src="JS/mapa.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="JSApi/Login.js"></script>
+  <script src="JSApi/Config.js"></script>
+  <script src="JSApi/mapa.js"></script>
 
 </head>
 
@@ -62,8 +53,8 @@
     </div>
   </div>
 
-  <script src="JS/mapa.js"></script>
-  <script src="JS/APIS.js"></script>
+  <script src="JSApi/mapa.js"></script>
+  <script src="JSApi/APIS.js"></script>
   <script src="assets/vendor/jquery/jquery.min.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>

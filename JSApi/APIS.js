@@ -60,6 +60,31 @@ function deleteMarkers() {
   markers = [];
 }
 
+function recuperarDatos() {
+  imei = sessionStorage.getItem("imei");
+  var ruta = '';
+  deleteMarkers();
+  fetch(ruta + '/web_service/obtenerDatos.php?imei=' + imei)
+    // fetch('localhost/web_service/obtenerDatos.php?imei=' + imei)
+    .then(data => {
+      return data.json()
+    })
+    .then(data => {
+      // dividir para un millon
+      console.log(data);
+      for (i = 0; i < data.length; i++) {
+        var outerCoords = {
+          lat: (data[i].lat / 1000000),
+          lng: (data[i].long / 1000000)
+        };
+        console.log(outerCoords);
+        // console.log(outerCoords);
+        // addMarker(outerCoords);
+        // map.data.loadGeoJson(outerCoords);
+      }
+    })
+}
+
 function recuperarLastLocation() {
   var id_user = '-1'
   var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjMyMDYzMDUsImV4cCI6MTU2MzIxNzEwNX0.htPjaBm6OuY2MDfp_O2_7bPfUrA4h7IcXSEz9XWetT0'

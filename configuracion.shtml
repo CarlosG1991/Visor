@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Visor Startel </title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="JSApi/Login.js"></script>
+  <script src="JSApi/Config.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+
+<body onload="cargarInfo()">
+  <!--#include file="menu.html" -->
+  <div class="container">
+    <form name="form1">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="email" class="form-control" id="nombre" disabled>
+      </div>
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input type="email" class="form-control" id="apellido" disabled>
+      </div>
+      <div class="form-group">
+        <label for="grupo">Grupo</label>
+        <input type="email" class="form-control" id="grupo" disabled>
+      </div>
+      <div class="form-group">
+        <label for="perfil">Perfil</label>
+        <input type="email" class="form-control" id="perfil" disabled>
+      </div>
+      <div class="form-group">
+        <label for="moviles">Moviles</label>
+        <select multiple class="form-control" id="moviles" name="moviles">
+        </select>
+      </div>
+    </form>
+  </div>
+  <script src="JSApi/APIS.js"></script>
+  </script>
+</body>
+
+</html>

@@ -5,33 +5,94 @@
   <title>Visor Startel </title>
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
-  <style>
-    .map {
-      height: 400px;
-      width: 100%;
-    }
-  </style>
+  <link href="css/estilos.css" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="JSApi/Login.js"></script>
   <script src="JSApi/Config.js"></script>
-  <script src="JSApi/mapa.js"></script>
-
+  <script src="JSApi/Login.js"></script>
+  <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
 </head>
 
-<body>
-
-  <!-- <body> -->
-  <div id="wrapper">
-    <!-- NAVBAR -->
-    <!--#include file="menu.html" -->
-    <div class="main">
-      <div class="main-content">
+<body onLoad="setInterval('recuperarDatos()',20000);">
+  <!-- NAVBAR -->
+  <!--#include file="menu.html" -->
+  <div class="container">
+    <div class="row" style="height:400px;">
+      <div class="col-8">
+        <div class="container-fluid">
+          <div class="map-responsive">
+            <div id="map">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div id="panel-scrolling" class="panel" style="height:400px;">
+          <div class="panel-heading">
+            <h3 class="panel-title">Alertas</h3>
+          </div>
+          <div class="panel-body" id="alertas">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="panel-scrolling">
+          <div class="panel-heading">
+            <!-- <h3 class="panel-title">Alertas</h3> -->
+          </div>
+          <div class="panel-body" style="height:50px;">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">First</th>
+                  <th scope="col">Last</th>
+                  <th scope="col">Handle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>@fat</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Larry</td>
+                  <td>the Bird</td>
+                  <td>@twitter</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="left">
+    <div id="map">
+    </div>
+    <div id="right">
+      <h3 class="panel-title">Alertasaaaaaaaaaaaaaaaaaaaaaaaaa</h3>
+    </div>
+  </div> -->
+  <!-- <div class="main-content">
         <div class="container-fluid">
           <div class="row">
 
             <div class="panel panel-headline">
               <div class="panel-heading">
-                <!-- <h3 class="panel-title">MAPA</h3> -->
               </div>
               <div class="panel-body">
                 <div id="map" class="map">
@@ -49,16 +110,9 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
+      </div> -->
   <script src="JSApi/mapa.js"></script>
   <script src="JSApi/APIS.js"></script>
-  <script src="assets/vendor/jquery/jquery.min.js"></script>
-  <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-  <script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-  <script src="assets/scripts/klorofil-common.js"></script>
   <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
   </script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApyY1ItLKTB94QXe35b2ZQFxlQipZWW5E&callback=initMap&libraries=drawing">

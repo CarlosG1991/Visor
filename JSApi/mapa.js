@@ -29,30 +29,9 @@ function initMap() {
     }
   });
   drawingManager.setMap(map);
-  // if (navigator.geolocation) {
-  //   navigator.geolocation.getCurrentPosition(function(position) {
-  //     pos = {
-  //       lat: position.coords.latitude,
-  //       lng: position.coords.longitude
-  //     };
-  //     infoWindow.setPosition(pos);
-  //     infoMarker.setPosition(pos);
-  //     infoWindow.open(map);
-  //     map.setCenter(pos);
-  //   }, function() {
-  //     handleLocationError(true, infoWindow, map.getCenter());
-  //   });
-  // } else {
-  //   handleLocationError(false, infoWindow, map.getCenter());
-  // }
   mapaAsignados();
   google.maps.event.addListener(map, 'zoom_changed', function() {
     zoom = map.getZoom();
-    // if (zoom == 21) {
-    //   for (var i = 0; i < markers.length; i++) {
-    //     markers[i].setIcon(new google.maps.MarkerImage('img/iconos/Car1.png', null, null, null, new google.maps.Size(550, 550)));
-    //   }
-    // }
     if (zoom == 20) {
       for (var i = 0; i < markers.length; i++) {
         markers[i].setIcon(new google.maps.MarkerImage('img/iconos/Car1.png', null, null, null, new google.maps.Size(40, 40)));
@@ -170,14 +149,18 @@ function cargarAsignados() {
   divPanel += '<ul class="nav nav-tabs" id="myTab" role="tablist"><li class="nav-item">';
   divPanel += '<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Dispositivos</a></li>';
   divPanel += '<li class="nav-item"><a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Alertas</a></li></ul>';
-  divPanel += '<div class="tab-content"><div class="tab-pane active" id="home" role="tabpanel"></div><div class="tab-pane" id="profile" role="tabpanel">1</div></div>';
+  divPanel += '<div class="tab-content"><div class="tab-pane active" id="home" role="tabpanel"></div><div class="tab-pane" id="profile" role="tabpanel"></div></div>';
   document.getElementById('alertas').innerHTML = divPanel;
 
   for (var i = 0; i < arrayMovil.length; i++) {
     valor = arrayMovil[i];
     divDispositivos += '<div class="col-sm-12"><h3>' + arrayMovil[i] + '</h3>';
-    divDispositivos += '<div class="form-group row" id="' + arrayMovil[i] + '" style="display:None;"><label for="example-date-input" class="col-2 col-form-label">Fecha</label>';
-    divDispositivos += '<div class="col-10" ><input class="form-control" type="date" value="2011-08-19" id="example-date-input"><button type="button" class="btn btn-secondary">Secondary</button></div></div>';
+    divDispositivos += '<div class="form-group row" id="' + arrayMovil[i] + '" style="display:None;">';
+    divDispositivos += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Fecha</span>';
+    divDispositivos += '</div><input class="form-control" id="fdesde' + arrayMovil[i] + '" type="date" id="example-date-input"><input type="time" id="hdesde' + arrayMovil[i] + '" name="hora" min="18:00" max="21:00" step="3600"></div>';
+    divDispositivos += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Fecha</span>';
+    divDispositivos += '</div><input class="form-control" id="fhasta' + arrayMovil[i] + '"  type="date" id="example-date-input"><input type="time" id="hhasta' + arrayMovil[i] + '" name="hora" min="18:00" max="21:00" step="3600"></div>';
+    divDispositivos += '<button type="button" onclick="historialVista(' + arrayMovil[i] + ');" class="btn btn-secondary">Buscar</button><button type="button" class="btn btn-danger">Cancelar</button></div>';
     divDispositivos += "<button class='btn btn-lg'";
     divDispositivos += 'onclick="javascript:historial(' + arrayMovil[i] + ');"';
     divDispositivos += "style='background-color:transparent;'><i class='fa fa-history'></i></button>";
@@ -192,6 +175,22 @@ function cargarAsignados() {
     // document.getElementById(relacion + condicion + '1').style.display = "none";
   }
   document.getElementById('home').innerHTML = divDispositivos;
+}
+// ****************************************Obetener Historial*******************
+function historialVista(movil) {
+  var fdesde = document.getElementById('fdesde' + movil.id).value;
+  var hdesde = document.getElementById('hdesde' + movil.id).value;
+  var fhasta = document.getElementById('fhasta' + movil.id).value;
+  var hhasta = document.getElementById('hhasta' + movil.id).value;
+  var desde = fdesde + ' ' + hdesde;
+  var hasta = fhasta + ' ' + hhasta;
+  fetch(ruta + '/web_service/obtenerHistorial.php?movil=' + movil.id + '&desde=' + desde + '&hasta=' + hasta)
+    .then(data => {
+      return data.json()
+    })
+    .then(data => {
+      console.log(data)
+    })
 }
 
 function historial(id) {

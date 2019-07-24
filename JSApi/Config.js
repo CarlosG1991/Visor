@@ -1,4 +1,4 @@
-var ruta;
+var ruta = '';
 
 function cargarCatalogo() {
   var xhr = new XMLHttpRequest();
@@ -16,28 +16,6 @@ function cargarXML(xml) {
   var parametros = docXML.getElementsByTagName("Parametros");
   for (var i = 0; i < parametros.length; i++) {
     ruta = parametros[i].getElementsByTagName("Path")[0].textContent;
-  }
-}
-
-function cargarCatalogoEve() {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      cargarXMLEve(this);
-    }
-  };
-  xhr.open("GET", "XML/Config.xml", true);
-  xhr.send();
-}
-
-function cargarXMLEve(xml) {
-  var docXML = xml.responseXML;
-  var parametros = docXML.getElementsByTagName("Alertas");
-  for (var i = 0; i < parametros.length; i++) {
-    if (parametros[i].getElementsByTagName("Id")[0].textContent == 101) {
-      console.log("hola");
-    }
-    // ruta = parametros[i].getElementsByTagName("id")[0].textContent;
   }
 }
 

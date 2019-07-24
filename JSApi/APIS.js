@@ -4,12 +4,22 @@ var markers = [];
 var currentdate = new Date();
 var control = 0;
 
+function acercar(latitud, longitud) {
+  console.log(latitud, longitud);
+  var bounds = new google.maps.LatLngBounds({
+    lat: latitud,
+    lng: longitud
+  });
+  map.fitBounds(bounds);
+}
+
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
 }
 
+// *****************************Agregar Marker****************************
 function addMarker(location) {
   var contentString = '<div id="content">' +
     '<div id="siteNotice">' +
@@ -34,7 +44,7 @@ function addMarker(location) {
   });
   markers.push(marker);
 }
-
+//*****************************Centrar Mapa a Markers*******************************
 function localizar() {
   console.log(markers);
   var latlngbounds = new google.maps.LatLngBounds();
@@ -46,11 +56,11 @@ function localizar() {
     bounds: latlngbounds,
     map: map,
     fillColor: "#000000",
-    fillOpacity: 0.2,
+    fillOpacity: 0.0,
     strokeWeight: 0
   });
 }
-
+// **********************************borrar markers ******************************
 function clearMarkers() {
   setMapOnAll(null);
 }
@@ -59,32 +69,46 @@ function deleteMarkers() {
   clearMarkers();
   markers = [];
 }
-
+// *********************************************************************************
+// **********************************Obtener datos desde la base********************
 function recuperarDatos() {
+  var contenedor = document.getElementById('profile')
+  var div, a;
+  var divDispositivos = '';
   imei = sessionStorage.getItem("imei");
   var ruta = '';
+  var alert = '';
   deleteMarkers();
   fetch(ruta + '/web_service/obtenerDatos.php?imei=' + imei)
-    // fetch('localhost/web_service/obtenerDatos.php?imei=' + imei)
     .then(data => {
       return data.json()
     })
     .then(data => {
-      // dividir para un millon
       console.log(data);
       for (i = 0; i < data.length; i++) {
+        //Se divide para un millon para obtener la coordenada en decimal
         var outerCoords = {
           lat: (data[i].lat / 1000000),
           lng: (data[i].long / 1000000)
         };
-        console.log(outerCoords);
-        // console.log(outerCoords);
-        // addMarker(outerCoords);
-        // map.data.loadGeoJson(outerCoords);
+        div = document.createElement('div');
+        a = document.createElement('a');
+        if (!document.getElementById(data[i].unit + '-' + data[i].alert)) {
+          div.setAttribute('class', 'col-sm-12');
+          div.setAttribute('id', data[i].unit + '-' + data[i].alert);
+          contenido = document.createTextNode(data[i].alert);
+          a.appendChild(contenido);
+          //a.setAttribute('onclick', 'zoom(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
+          a.setAttribute('onclick', 'acercar(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
+          div.appendChild(a);
+          contenedor.appendChild(div);
+        }
+        addMarker(outerCoords);
       }
+      localizar();
     })
 }
-
+// *********************************************************
 function recuperarLastLocation() {
   var id_user = '-1'
   var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjMyMDYzMDUsImV4cCI6MTU2MzIxNzEwNX0.htPjaBm6OuY2MDfp_O2_7bPfUrA4h7IcXSEz9XWetT0'
@@ -173,17 +197,6 @@ function follow(movil) {
       }
     })
 }
-
-function zoom(latitud, longitud) {
-  console.log(latitud);
-  console.log(longitud);
-  var bounds = new google.maps.LatLngBounds({
-    lat: latitud,
-    lng: longitud
-  });
-  map.fitBounds(bounds);
-}
-
 
 function recuperarHistorial(bearer_token, movil, date) {
   var details = {
@@ -414,8 +427,6 @@ function ultimaPosicion(movil, fecha) {
       console.log(data)
     })
 }
-
-
 
 function convertir(json) {
   var geojson = {

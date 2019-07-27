@@ -2,7 +2,6 @@ var movil, a, br, contenido
 var gejos = ''
 var markers = [];
 var currentdate = new Date();
-var control = 0;
 
 function acercar(latitud, longitud) {
   console.log(latitud, longitud);
@@ -72,41 +71,45 @@ function deleteMarkers() {
 // *********************************************************************************
 // **********************************Obtener datos desde la base********************
 function recuperarDatos() {
-  var contenedor = document.getElementById('profile')
-  var div, a;
-  var divDispositivos = '';
-  imei = sessionStorage.getItem("imei");
-  var ruta = '';
-  var alert = '';
-  deleteMarkers();
-  fetch(ruta + '/web_service/obtenerDatos.php?imei=' + imei)
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data);
-      for (i = 0; i < data.length; i++) {
-        //Se divide para un millon para obtener la coordenada en decimal
-        var outerCoords = {
-          lat: (data[i].lat / 1000000),
-          lng: (data[i].long / 1000000)
-        };
-        div = document.createElement('div');
-        a = document.createElement('a');
-        if (!document.getElementById(data[i].unit + '-' + data[i].alert)) {
-          div.setAttribute('class', 'col-sm-12');
-          div.setAttribute('id', data[i].unit + '-' + data[i].alert);
-          contenido = document.createTextNode(data[i].alert);
-          a.appendChild(contenido);
-          //a.setAttribute('onclick', 'zoom(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
-          a.setAttribute('onclick', 'acercar(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
-          div.appendChild(a);
-          contenedor.appendChild(div);
-        }
-        addMarker(outerCoords);
-      }
-      localizar();
-    })
+  setInterval(function() {
+    if (control == 0) {
+      var contenedor = document.getElementById('profile')
+      var div, a;
+      var divDispositivos = '';
+      imei = sessionStorage.getItem("imei");
+      var ruta = '';
+      var alert = '';
+      deleteMarkers();
+      fetch('/web_service/obtenerDatos.php?imei=' + imei)
+        .then(data => {
+          return data.json()
+        })
+        .then(data => {
+          console.log(data);
+          for (i = 0; i < data.length; i++) {
+            //Se divide para un millon para obtener la coordenada en decimal
+            var outerCoords = {
+              lat: (data[i].lat / 1000000),
+              lng: (data[i].long / 1000000)
+            };
+            div = document.createElement('div');
+            a = document.createElement('a');
+            if (!document.getElementById(data[i].unit + '-' + data[i].alert)) {
+              div.setAttribute('class', 'col-sm-12');
+              div.setAttribute('id', data[i].unit + '-' + data[i].alert);
+              contenido = document.createTextNode(data[i].alert);
+              a.appendChild(contenido);
+              //a.setAttribute('onclick', 'zoom(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
+              a.setAttribute('onclick', 'acercar(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
+              div.appendChild(a);
+              contenedor.appendChild(div);
+            }
+            addMarker(outerCoords);
+          }
+          localizar();
+        })
+    }
+  }, 20000);
 }
 // *********************************************************
 function recuperarLastLocation() {
@@ -173,29 +176,34 @@ function recuperarLastLocation() {
 
 function follow(movil) {
   control = 1;
-  var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
-    "-" + currentdate.getDay() + "T" +
-    currentdate.getHours() + ":" +
-    currentdate.getMinutes() + ":" + currentdate.getSeconds();
-  fetch('https://api.gservicetrack.com/follow/raptortrack?limit=25&start=0&movil=' + movil + '&date>=' + fecha, {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log('Created Gist:', data)
-      for (i = 0; i < data.data.length; i++) {
-        var outerCoords = {
-          lat: data.data[i].lat,
-          lng: data.data[i].lon
-        };
-        addMarker(outerCoords);
-        map.data.loadGeoJson(outerCoords);
-      }
-    })
+  setInterval(function() {
+    clearMarkers();
+    var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
+      "-" + currentdate.getDay() + "T" +
+      currentdate.getHours() + ":" +
+      currentdate.getMinutes() + ":" + currentdate.getSeconds();
+    fetch('https://api.gservicetrack.com/follow/raptortrack?limit=25&start=0&movil=' + movil.id + '&date>=' + fecha, {
+        headers: {
+          "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+        }
+      })
+      .then(data => {
+        return data.json()
+      })
+      .then(data => {
+        console.log('Created Gist:', data)
+        for (i = 0; i < data.data.length; i++) {
+          var outerCoords = {
+            lat: data.data[i].lat,
+            lng: data.data[i].lon
+          };
+          addMarker(outerCoords);
+          map.data.loadGeoJson(outerCoords);
+        }
+        localizar();
+      })
+
+  }, 3000);
 }
 
 function recuperarHistorial(bearer_token, movil, date) {

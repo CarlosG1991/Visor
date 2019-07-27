@@ -1,7 +1,16 @@
+function init() {
+  if (window.localStorage["login"] == '0') {
+    window.location.href = "index.html";
+  } else if (window.localStorage["login"] == '1') {
+    // recuperarDatos();
+    window.location.href = "mapa.shtml";
+  }
+}
+
 function apiLogin() {
   var password = document.form.password.value;
   var username = document.form.login.value;
-  fetch(ruta + '/web_service/login_usuarios.php?mail=' + username + '&pass=' + password)
+  fetch('/web_service/login_usuarios.php?mail=' + username + '&pass=' + password)
     .then(data => {
       return data.json()
     })
@@ -15,6 +24,7 @@ function apiLogin() {
           sessionStorage.setItem("movil_assign_user", data[i].movil_assign_user);
           sessionStorage.setItem("group_name", data[i].group_name);
           sessionStorage.setItem("profile_name", data[i].profile_name);
+          window.localStorage["login"] = "1";
           document.form.submit();
         }
       } else {
@@ -32,6 +42,7 @@ function cerrarSesion() {
     sessionStorage.setItem("movil_assign_user", "");
     sessionStorage.setItem("group_name", "");
     sessionStorage.setItem("profile_name", "");
+    window.localStorage["login"] = "0";
     window.location.href = "index.html";
   }
 }

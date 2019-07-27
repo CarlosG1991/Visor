@@ -8,14 +8,24 @@
   <link href="css/estilos.css" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="JSApi/Config.js"></script>
+
   <script src="JSApi/Login.js"></script>
   <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+    function initMapa() {
+      if (window.localStorage["login"] == '0') {
+        window.location.href = "index.html";
+      } else if (window.localStorage["login"] == '1') {
+        recuperarDatos();
+      }
+    }
+  </script>
 </head>
 
-<body onLoad="setInterval('recuperarDatos()',20000);">
+<body onLoad="initMapa();">
   <!-- NAVBAR -->
   <!--#include file="menu.html" -->
   <div class="container">
@@ -38,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div class="row" style="display:None;">
+    <div class="row" id="tablaHistorial" style="display:None;">
       <div class="col-12">
         <div class="panel-scrolling">
           <div class="panel-heading">
@@ -51,28 +61,12 @@
                   <th scope="col">Unidad</th>
                   <th scope="col">Latitud</th>
                   <th scope="col">Longitud</th>
-                  <th scope="col">Handle</th>
+                  <th scope="col">Odometro</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Alerta</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Larry</td>
-                  <td>the Bird</td>
-                  <td>@twitter</td>
-                </tr>
+              <tbody id="cuerpoTabla">
               </tbody>
             </table>
           </div>
@@ -81,6 +75,7 @@
     </div>
   </div>
   <script src="JSApi/mapa.js"></script>
+  <script src="JSApi/Ruta.js"></script>
   <script src="JSApi/APIS.js"></script>
   <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
   </script>

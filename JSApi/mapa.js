@@ -1,7 +1,9 @@
-var map
-var infoMarker
-var moviles_asignados
+var map;
+var infoMarker;
+var moviles_asignados;
 var valor;
+var control = 0;
+// var directionsDisplay;
 
 function initMap() {
   cargarAsignados();
@@ -138,6 +140,16 @@ function initMap() {
   });
 }
 
+
+function cancelar(id) {
+  deleteMarkers();
+  document.getElementById("tablaHistorial").style.display = "None";
+  document.getElementById(id.id).style.display = "None";
+  var tbody = document.getElementById("cuerpoTabla");
+  tbody.innerHTML = "";
+  // directionDisplay.setMap(null);
+}
+
 function cargarAsignados() {
   moviles_asignados = sessionStorage.getItem("movil_assign_user");
   var arrayMovil = moviles_asignados.split(', ');
@@ -157,14 +169,14 @@ function cargarAsignados() {
     divDispositivos += '<div class="col-sm-12"><h3>' + arrayMovil[i] + '</h3>';
     divDispositivos += '<div class="form-group row" id="' + arrayMovil[i] + '" style="display:None;">';
     divDispositivos += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Fecha</span>';
-    divDispositivos += '</div><input class="form-control" id="fdesde' + arrayMovil[i] + '" type="date" id="example-date-input"><input type="time" id="hdesde' + arrayMovil[i] + '" name="hora" min="18:00" max="21:00" step="3600"></div>';
+    divDispositivos += '</div><input class="form-control" id="fdesde' + arrayMovil[i] + '" type="date" id="example-date-input"><input type="time" id="hdesde' + arrayMovil[i] + '" name="hora" step="3600"></div>';
     divDispositivos += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Fecha</span>';
-    divDispositivos += '</div><input class="form-control" id="fhasta' + arrayMovil[i] + '"  type="date" id="example-date-input"><input type="time" id="hhasta' + arrayMovil[i] + '" name="hora" min="18:00" max="21:00" step="3600"></div>';
-    divDispositivos += '<button type="button" onclick="historialVista(' + arrayMovil[i] + ');" class="btn btn-secondary">Buscar</button><button type="button" class="btn btn-danger">Cancelar</button></div>';
+    divDispositivos += '</div><input class="form-control" id="fhasta' + arrayMovil[i] + '"  type="date" id="example-date-input"><input type="time" id="hhasta' + arrayMovil[i] + '" name="hora"  step="3600"></div>';
+    divDispositivos += '<button type="button" onclick="historialVista(' + arrayMovil[i] + ');" class="btn btn-secondary">Buscar</button><button type="button" onclick="cancelar(' + arrayMovil[i] + ');" class="btn btn-danger">Cancelar</button></div>';
     divDispositivos += "<button class='btn btn-lg'";
     divDispositivos += 'onclick="javascript:historial(' + arrayMovil[i] + ');"';
     divDispositivos += "style='background-color:transparent;'><i class='fa fa-history'></i></button>";
-    divDispositivos += "<button class='btn btn-lg ' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
+    divDispositivos += "<button class='btn btn-lg' onclick='follow(" + arrayMovil[i] + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
     ul = document.createElement('ul');
     a = document.createElement('a');
     contenido = document.createTextNode(arrayMovil[i]);
@@ -178,18 +190,70 @@ function cargarAsignados() {
 }
 // ****************************************Obetener Historial*******************
 function historialVista(movil) {
+  control = 1;
+  deleteMarkers();
+  var flightPlanCoordinates = [];
+  var coordenadaInicio, coordenadaFinal;
+  var inilat, inilong, finlat, finlog;
   var fdesde = document.getElementById('fdesde' + movil.id).value;
   var hdesde = document.getElementById('hdesde' + movil.id).value;
   var fhasta = document.getElementById('fhasta' + movil.id).value;
   var hhasta = document.getElementById('hhasta' + movil.id).value;
   var desde = fdesde + ' ' + hdesde;
   var hasta = fhasta + ' ' + hhasta;
-  fetch(ruta + '/web_service/obtenerHistorial.php?movil=' + movil.id + '&desde=' + desde + '&hasta=' + hasta)
+  var tr, td1, td2, td3, td4, td5, td6, contenido;
+  var tabla = document.getElementById("cuerpoTabla");
+
+  fetch('/web_service/obtenerHistorial.php?movil=' + movil.id + '&desde=' + desde + '&hasta=' + hasta)
     .then(data => {
       return data.json()
     })
     .then(data => {
-      console.log(data)
+      document.getElementById("tablaHistorial").style.display = "";
+      for (var i = 0; i < data.length; i++) {
+        if (i == 0) {
+          inilat = data[i].lat / 1000000;
+          inilong = data[i].long / 1000000;
+        } else if (i <= data.length - 1) {
+          finlat = data[i].lat / 1000000;
+          finlog = data[i].long / 1000000;
+          // GoogleMap_selected(inilat, inilong, finlat, finlog);
+          draw_rute_map(inilat, inilong, finlat, finlog);
+          inilat = data[i].lat / 1000000;
+          inilong = data[i].long / 1000000;
+        }
+        tr = document.createElement('tr');
+        td1 = document.createElement('td');
+        td2 = document.createElement('td');
+        td3 = document.createElement('td');
+        td4 = document.createElement('td');
+        td5 = document.createElement('td');
+        td6 = document.createElement('td');
+        var outerCoords = {
+          lat: data[i].lat / 1000000,
+          lng: data[i].long / 1000000
+        };
+        contenido = document.createTextNode(data[i].unit);
+        td1.appendChild(contenido);
+        tr.appendChild(td1);
+        contenido = document.createTextNode(data[i].lat / 1000000);
+        td2.appendChild(contenido);
+        tr.appendChild(td2);
+        contenido = document.createTextNode(data[i].long / 1000000);
+        td3.appendChild(contenido);
+        tr.appendChild(td3);
+        contenido = document.createTextNode(data[i].odometro);
+        td4.appendChild(contenido);
+        tr.appendChild(td4);
+        contenido = document.createTextNode(data[i].fecha);
+        td5.appendChild(contenido);
+        tr.appendChild(td5);
+        contenido = document.createTextNode(data[i].alert);
+        td6.appendChild(contenido);
+        tr.appendChild(td6);
+        tabla.appendChild(tr);
+      };
+
     })
 }
 

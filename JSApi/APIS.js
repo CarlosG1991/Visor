@@ -4,6 +4,7 @@ var markers = [];
 var currentdate = new Date();
 var padaras = [];
 var ctrfollow = 0;
+var control;
 
 function acercar(latitud, longitud) {
   console.log(latitud, longitud);
@@ -248,20 +249,36 @@ function follow(movil) {
           if (ctrfollow == 0) {
             deleteMarkers();
             addMarker(outerCoords);
+            distancia(data.data[i].lat, data.data[i].lon);
           } else {
+            cambiarDistancia(data.data[i].lat, data.data[i].lon);
             cambiarPositionFollow(outerCoords);
           }
-          distancia(data.data[i].lat, data.data[i].lon);
         }
         ctrfollow = 1;
         localizar();
       })
 
-  }, 3000);
+  }, 10000);
+}
+
+function cambiarDistancia(lat, lng) {
+  control.spliceWaypoints(0, 1, L.latLng(lat, lng));
+  map.closePopup();
+  console.log(control.waypoints);
+  // if (control._routes.waypoints.length >= 2) {
+  //   router.route(control.waypoints, function(err, routes) {
+  //     if (err) {
+  //       alert(err);
+  //     } else {
+  //       line = L.Routing.line(routes[0]) addTo(map).;
+  //     }
+  //   });
+  // }
 }
 
 function distancia(lat, lng) {
-  var control = L.Routing.control(L.extend({
+  control = L.Routing.control(L.extend({
     waypoints: [
       L.latLng(lat, lng),
       L.latLng(-0.179349, -78.323473)

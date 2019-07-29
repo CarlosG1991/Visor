@@ -1,8 +1,5 @@
 function init() {
-  if (window.localStorage["login"] == '0') {
-    window.location.href = "index.html";
-  } else if (window.localStorage["login"] == '1') {
-    // recuperarDatos();
+  if (window.localStorage["login"] == '1') {
     window.location.href = "mapa.shtml";
   }
 }

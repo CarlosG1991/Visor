@@ -87,6 +87,7 @@
   </script>
   <script src="JSApi/mapaleaflet.js"></script>
   <script src="js/leaflet-routing-machine.js"></script>
+  <!-- <script src="js/leaflet-routing-machine.min.js"></script> -->
   <script src="js/Control.Geocoder.js"></script>
   <script src="JSApi/Ruta.js"></script>
   <script src="JSApi/APIS.js"></script>

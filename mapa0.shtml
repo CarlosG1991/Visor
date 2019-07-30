@@ -35,6 +35,9 @@
           <div class="map-responsive">
             <div id="map">
             </div>
+            <div id="controls">
+              <h1>Hola</h1>
+            </div>
           </div>
         </div>
       </div>

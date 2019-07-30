@@ -4,10 +4,12 @@ var markers = [];
 var currentdate = new Date();
 var padaras = [];
 var ctrfollow = 0;
-var control;
+var controlR;
+var router = L.Routing.osrmv1(),
+  waypoints = [],
+  line;
 
 function acercar(latitud, longitud) {
-  console.log(latitud, longitud);
   var bounds = new google.maps.LatLngBounds({
     lat: latitud,
     lng: longitud
@@ -88,7 +90,6 @@ function localizar() {
 // **********************************borrar markers ******************************
 function clearMarkers(ime) {
   for (var i = 0; i < markers.length; i++) {
-    console.log(markers[i].options.title);
     if (markers[i].options.title == ime) {
       map.removeLayer(markers[i]);
     }
@@ -111,7 +112,6 @@ function cambiarPositionFollow(latlng) {
 
 function deleteMarkers() {
   for (var i = 0; i < markers.length; i++) {
-    console.log(markers[i].options.title);
     map.removeLayer(markers[i]);
   }
   markers = [];
@@ -133,7 +133,7 @@ function recuperarDatos() {
           return data.json()
         })
         .then(data => {
-          console.log(data);
+
           for (i = 0; i < data.length; i++) {
             //Se divide para un millon para obtener la coordenada en decimal
             var outerCoords = {
@@ -263,22 +263,38 @@ function follow(movil) {
 }
 
 function cambiarDistancia(lat, lng) {
-  control.spliceWaypoints(0, 1, L.latLng(lat, lng));
+  controlR.spliceWaypoints(0, 1, L.latLng(lat, lng));
   map.closePopup();
-  console.log(control.waypoints);
-  // if (control._routes.waypoints.length >= 2) {
+  // waypoints = [];
+  for (var i = 0; i < controlR._routes.length; i++) {
+    waypoints.push({
+      latLng: controlR._routes[i].waypoints[i].latLng
+    });
+  }
+  if (waypoints.length >= 2) {
+    router.route(waypoints, function(err, routes) {
+      if (err) {
+        alert(err);
+      } else {
+        console.log(routes[0].summary);
+        console.log(routes[0].summary.totalDistance);
+      }
+    });
+  }
+  // if (control._routes.inputWaypoints.length >= 2) {
   //   router.route(control.waypoints, function(err, routes) {
   //     if (err) {
   //       alert(err);
   //     } else {
-  //       line = L.Routing.line(routes[0]) addTo(map).;
+  //       // line = L.Routing.line(routes[0]) addTo(map).;
+  //       alert('Distance: ' + routes[0].summary.totalDistance);
   //     }
   //   });
   // }
 }
 
 function distancia(lat, lng) {
-  control = L.Routing.control(L.extend({
+  controlR = L.Routing.control(L.extend({
     waypoints: [
       L.latLng(lat, lng),
       L.latLng(-0.179349, -78.323473)
@@ -306,7 +322,7 @@ function distancia(lat, lng) {
       ]
     }
   })).addTo(map);
-  L.Routing.errorControl(control).addTo(map);
+  L.Routing.errorControl(controlR).addTo(map);
 }
 
 function recuperarHistorial(bearer_token, movil, date) {
@@ -450,7 +466,7 @@ function recuperarGrupoMovil() {
 }
 
 function recuperarMoviles() {
-  fetch('https://api.gservicetrack.com/movils/raptortrack?limit=25&start=0&sort=movil', {
+  fetch('https://api.gservicetrack.com/movils/raptortrack?limit=100&start=0&sort=movil', {
       headers: {
         "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
       }

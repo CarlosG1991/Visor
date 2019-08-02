@@ -9,6 +9,9 @@
   height: 0;
 }
 
+/* .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
+  display: none;
+} */
 #panel-scrolling {
   height: 150px;
   overflow-y: scroll;

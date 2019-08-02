@@ -5,7 +5,8 @@
   <title>Visor Startel </title>
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
-  <link href="css/estilos.css" rel="stylesheet">
+  <!-- <link href="css/estilos.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="css/m.css" />
   <link href="leaflet/leaflet.css" rel="stylesheet">
   <link href="css/leaflet-distance-marker.css" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -20,71 +21,93 @@
   <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=KEY"></script>
-  <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-routing.js?key=KEY"></script>
+  <!-- <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=KEY"></script>
+  <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-routing.js?key=KEY"></script> -->
   <script src="js/bootstrap.min.js"></script>
+
+  <!-- leaflet draw -->
+  <script src="leafletDraw/Leaflet.draw.js"></script>
+  <script src="leafletDraw/Leaflet.Draw.Event.js"></script>
+  <link rel="stylesheet" href="leafletDraw/leaflet.draw.css" />
+
+  <script src="leafletDraw/Toolbar.js"></script>
+  <script src="leafletDraw/Tooltip.js"></script>
+
+  <script src="leafletDraw/ext/GeometryUtil.js"></script>
+  <script src="leafletDraw/ext/LatLngUtil.js"></script>
+  <script src="leafletDraw/ext/LineUtil.Intersect.js"></script>
+  <script src="leafletDraw/ext/Polygon.Intersect.js"></script>
+  <script src="leafletDraw/ext/Polyline.Intersect.js"></script>
+  <script src="leafletDraw/ext/TouchEvents.js"></script>
+
+  <script src="leafletDraw/draw/DrawToolbar.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.Feature.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.SimpleShape.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.Polyline.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.Marker.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.Circle.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.CircleMarker.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.Polygon.js"></script>
+  <script src="leafletDraw/draw/handler/Draw.Rectangle.js"></script>
+
+
+  <script src="leafletDraw/edit/EditToolbar.js"></script>
+  <script src="leafletDraw/edit/handler/EditToolbar.Edit.js"></script>
+  <script src="leafletDraw/edit/handler/EditToolbar.Delete.js"></script>
+
+  <script src="leafletDraw/Control.Draw.js"></script>
+
+  <script src="leafletDraw/edit/handler/Edit.Poly.js"></script>
+  <script src="leafletDraw/edit/handler/Edit.SimpleShape.js"></script>
+  <script src="leafletDraw/edit/handler/Edit.Rectangle.js"></script>
+  <script src="leafletDraw/edit/handler/Edit.Marker.js"></script>
+  <script src="leafletDraw/edit/handler/Edit.CircleMarker.js"></script>
+  <script src="leafletDraw/edit/handler/Edit.Circle.js"></script>
+  <!-- ------------------- -->
 </head>
 
 <body onLoad="initMapa();">
   <!-- NAVBAR -->
   <!--#include file="menu.html" -->
-  <div class="container">
-    <div class="row" style="height:400px;">
-      <div class="col-8">
-        <div class="container-fluid">
-          <div class="map-responsive">
-            <div id="map">
-            </div>
-          </div>
+
+  <div id="map">
+  </div>
+  <div id="controls">
+    <div class="wrapper">
+      <div id="panel-scrolling" class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Alertas</h3>
         </div>
-      </div>
-      <div class="col-4">
-        <div id="panel-scrolling" class="panel" style="height:400px;">
-          <div class="panel-heading">
-            <h3 class="panel-title">Alertas</h3>
-          </div>
-          <div class="panel-body" id="alertas">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row" id="tablaHistorial" style="display:None;">
-      <div class="col-12">
-        <div class="panel-scrolling">
-          <div class="panel-heading">
-            <!-- <h3 class="panel-title">Alertas</h3> -->
-          </div>
-          <div class="panel-body" style="height:50px;">
-            <table class="table">
-              <thead class="thead-dark">
-                <tr>
-                  <th scope="col">Unidad</th>
-                  <th scope="col">Latitud</th>
-                  <th scope="col">Longitud</th>
-                  <th scope="col">Odometro</th>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Alerta</th>
-                </tr>
-              </thead>
-              <tbody id="cuerpoTabla">
-              </tbody>
-            </table>
-          </div>
+        <div class="panel-body" id="alertas">
         </div>
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    var map = L.map('map');
-    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-      maxZoom: 18
-    }).addTo(map);
-    L.control.scale().addTo(map);
-    // L.marker([41.66, -4.71], {
-    //   draggable: true
-    // }).addTo(map);
-  </script>
+
+  <div class="row" id="tablaHistorial" style="display:None;">
+    <div class="col-12">
+      <div class="panel-scrolling">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body" style="height:50px;">
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Unidad</th>
+                <th scope="col">Latitud</th>
+                <th scope="col">Longitud</th>
+                <th scope="col">Odometro</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Alerta</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoTabla">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="JSApi/mapaleaflet.js"></script>
   <script src="js/leaflet-routing-machine.js"></script>
   <!-- <script src="js/leaflet-routing-machine.min.js"></script> -->

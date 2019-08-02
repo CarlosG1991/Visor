@@ -5,16 +5,14 @@ var currentdate = new Date();
 var padaras = [];
 var ctrfollow = 0;
 var controlR;
-var router = L.Routing.osrmv1(),
+var router = L.Routing.mapbox('pk.eyJ1IjoiY2FybG9zZ29tZXoxOTkxIiwiYSI6ImNqeXE4amNqbTBocmkzZG11eTE3MWFjaGkifQ.jCyl4wyU8uZ5N7O3IYzt5w'),
   waypoints = [],
   line;
 
 function acercar(latitud, longitud) {
-  var bounds = new google.maps.LatLngBounds({
-    lat: latitud,
-    lng: longitud
-  });
-  map.fitBounds(bounds);
+  var corner1 = L.latLng(latitud, longitud),
+    bounds = L.latLngBounds(corner1, corner1);
+  map.fitBounds([bounds]);
 }
 
 function setMapOnAll(map) {
@@ -50,6 +48,13 @@ function setMapOnAll(map) {
 // }
 // *****************************Agregar Marker leaflet****************************
 function addMarker(location, imei) {
+  // var MyIcon = L.Icon.extend({
+  //   iconUrl: 'img/iconos/Car1.png',
+  //   iconSize: new L.Point(10, 16),
+  //   shadowSize: new L.Point(10, 16),
+  //   iconAnchor: new L.Point(10, 16)
+  // });
+  // var icon = new MyIcon();
   var contentString = '<div id="content">' +
     '<div id="siteNotice">' +
     '</div>' +
@@ -59,27 +64,13 @@ function addMarker(location, imei) {
     '</p>' +
     '</div>' +
     '</div>';
-  var marker = L.marker(location, {
+  marker = L.marker(location, {
     title: imei
   }).bindPopup(contentString).addTo(map);
   markers.push(marker);
 }
 //*****************************Centrar Mapa a Markers*******************************
-// function localizar() {
-//   console.log(markers);
-//   var latlngbounds = new google.maps.LatLngBounds();
-//   for (var i = 0; i < markers.length; i++) {
-//     latlngbounds.extend(markers[i].position);
-//   }
-//   map.fitBounds(latlngbounds);
-//   new google.maps.Rectangle({
-//     bounds: latlngbounds,
-//     map: map,
-//     fillColor: "#000000",
-//     fillOpacity: 0.0,
-//     strokeWeight: 0
-//   });
-// }
+
 function localizar() {
   var latlngbounds = L.latLngBounds();
   for (var i = 0; i < markers.length; i++) {
@@ -127,7 +118,6 @@ function recuperarDatos() {
       imei = sessionStorage.getItem("imei");
       var ruta = '';
       var alert = '';
-      // deleteMarkers();
       fetch('/web_service/obtenerDatos.php?imei=' + imei)
         .then(data => {
           return data.json()
@@ -160,69 +150,6 @@ function recuperarDatos() {
   }, 20000);
 }
 // *********************************************************
-function recuperarLastLocation() {
-  var id_user = '-1'
-  var bearer_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjotMSwiaWRfY29tcGFueSI6IjEwMTkiLCJ0b2tlbl91c2VyIjoiZjQ3Mzg0OWViMjNiMGVkMDJkNzFlMjQwMGM5MTQwZGEiLCJpYXQiOjE1NjMyMDYzMDUsImV4cCI6MTU2MzIxNzEwNX0.htPjaBm6OuY2MDfp_O2_7bPfUrA4h7IcXSEz9XWetT0'
-  var contenedor = document.getElementById("alertas");
-  if (gejos != '') {
-    deleteMarkers();
-  }
-  var details = {
-    'id': id_user,
-  };
-  var marker_actual;
-  var formBody = [];
-  for (var property in details) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  var bearer = 'Bearer ' + bearer_token;
-  console.log('Obteniendo los datos de la API...');
-  if (control == 0) {
-
-    fetch('https://apiservice.servertrack.co:3006/raptortrack/app/content/last_location', {
-      async: true,
-      crossDomain: true,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': bearer,
-        'content-length': "57",
-      },
-      body: formBody
-    }).then(
-      res => res.json()
-    ).then(
-      data => {
-        console.log('Created Gist:', data)
-        for (i = 0; i < data.data.length; i++) {
-          movil = data.data[i].movil
-          a = document.createElement('a');
-          br = document.createElement('br');
-          contenido = document.createTextNode(data.data[i].event + " " + movil);
-          a.appendChild(contenido);
-          a.setAttribute('onclick', 'zoom(' + data.data[i].lat + ',' + data.data[i].lon + ')');
-          contenedor.appendChild(a);
-          contenedor.appendChild(br);
-          var outerCoords = {
-            lat: data.data[i].lat,
-            lng: data.data[i].lon
-          };
-          cambiarPosition(outerCoords, data.data[i].movil);
-          // addMarker(outerCoords)
-
-        }
-        var markerCluster = new MarkerClusterer(map, markers, {
-          imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
-        });
-      }
-    );
-  }
-
-}
-
 function follow(movil) {
   control = 1;
   setInterval(function() {
@@ -274,23 +201,14 @@ function cambiarDistancia(lat, lng) {
   if (waypoints.length >= 2) {
     router.route(waypoints, function(err, routes) {
       if (err) {
-        alert(err);
+        // alert(err);
+        console.log(err);
       } else {
         console.log(routes[0].summary);
         console.log(routes[0].summary.totalDistance);
       }
     });
   }
-  // if (control._routes.inputWaypoints.length >= 2) {
-  //   router.route(control.waypoints, function(err, routes) {
-  //     if (err) {
-  //       alert(err);
-  //     } else {
-  //       // line = L.Routing.line(routes[0]) addTo(map).;
-  //       alert('Distance: ' + routes[0].summary.totalDistance);
-  //     }
-  //   });
-  // }
 }
 
 function distancia(lat, lng) {
@@ -299,10 +217,12 @@ function distancia(lat, lng) {
       L.latLng(lat, lng),
       L.latLng(-0.179349, -78.323473)
     ],
+    show: false,
     geocoder: L.Control.Geocoder.nominatim(),
     routeWhileDragging: true,
     reverseWaypoints: true,
     showAlternatives: true,
+    collapsed: true,
     altLineOptions: {
       styles: [{
           color: 'black',

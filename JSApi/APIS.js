@@ -153,7 +153,6 @@ function recuperarDatos() {
 function follow(movil) {
   control = 1;
   setInterval(function() {
-
     var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
       "-" + currentdate.getDay() + "T" +
       currentdate.getHours() + ":" +
@@ -176,7 +175,7 @@ function follow(movil) {
           if (ctrfollow == 0) {
             deleteMarkers();
             addMarker(outerCoords);
-            distancia(data.data[i].lat, data.data[i].lon);
+            removeMarkers(data.data[i].lat, data.data[i].lon);
           } else {
             cambiarDistancia(data.data[i].lat, data.data[i].lon);
             cambiarPositionFollow(outerCoords);
@@ -185,7 +184,6 @@ function follow(movil) {
         ctrfollow = 1;
         localizar();
       })
-
   }, 10000);
 }
 
@@ -211,11 +209,11 @@ function cambiarDistancia(lat, lng) {
   }
 }
 
-function distancia(lat, lng) {
+function distancia(lat, lng, latF, lngF) {
   controlR = L.Routing.control(L.extend({
     waypoints: [
       L.latLng(lat, lng),
-      L.latLng(-0.179349, -78.323473)
+      L.latLng(latF, lngF)
     ],
     show: false,
     geocoder: L.Control.Geocoder.nominatim(),

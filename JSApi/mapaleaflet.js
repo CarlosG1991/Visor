@@ -1,13 +1,15 @@
 var control = 0;
-var moviles_asignados = [];
+var moviles_asignados = [],
+  traAsiganada = [];
 var moviles = "",
-  imeis = "";
-var dir;
+  imeis = "",
+  idTra = "";
+var dir, overlayMaps;
 var coords = [];
 var marker;
+var overlayMaps = {};
 var map = L.map('map'),
-  mr = [],
-  drawnItems = L.featureGroup().addTo(map);;
+  drawnItems = L.featureGroup().addTo(map);
 
 var icon = L.icon({
   iconUrl: 'img/iconos/Car1.png',
@@ -34,6 +36,43 @@ var icon4 = L.icon({
   popupAnchor: [-3, -76]
 });
 L.control.scale().addTo(map);
+
+var removeMarkers = function(lati, longi) {
+  var flag = 0;
+  var distI = 0,
+    distF = 0;
+  var latF, longF;
+  for (const prop in overlayMaps) {
+    overlayMaps[prop].eachLayer(function(layer) {
+      if (flag == 0) {
+        distI = getKilometros(lati, longi, layer._latlng.lat, layer._latlng.lng);
+        latF = layer._latlng.lat;
+        longF = layer._latlng.lng;
+        flag = 1;
+      } else {
+        distF = getKilometros(lati, longi, layer._latlng.lat, layer._latlng.lng);
+        if (parseInt(distF) < parseInt(distI)) {
+          distI = getKilometros(lati, longi, layer._latlng.lat, layer._latlng.lng);
+          latF = layer._latlng.lat;
+          longF = layer._latlng.lng;
+        }
+      }
+    });
+  }
+  distancia(lati, longi, latF, longF);
+}
+var getKilometros = function(lat1, lon1, lat2, lon2) {
+  rad = function(x) {
+    return x * Math.PI / 180;
+  }
+  var R = 6378.137; //Radio de la tierra en km
+  var dLat = rad(lat2 - lat1);
+  var dLong = rad(lon2 - lon1);
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return d.toFixed(3); //Retorna tres decimales
+}
 // Capas base
 var osmBase = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap<\/a> contributors'
@@ -41,12 +80,21 @@ var osmBase = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 osmBase.addTo(map);
 mapLink = '<a href="http://www.esri.com/">Esri</a>';
 wholink = 'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
-var satelite =
-  L.tileLayer(
-    'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; ' + mapLink + ', ' + wholink,
-    });
-fetch('/web_service/obtenerParadas.php?trayectoria_id=1,2')
+traAsiganada = JSON.parse(localStorage.getItem("trayectoria"));
+for (var i = 0; i < traAsiganada.length; i++) {
+  if (i == 0) {
+    idTra += traAsiganada[i].id;
+  } else {
+    idTra += "," + traAsiganada[i].id;
+  }
+}
+var baseMaps = {
+  "OSM": osmBase,
+  "Satelital": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+    attribution: 'google'
+  })
+};
+fetch('/web_service/obtenerParadas.php?trayectoria_id=' + idTra)
   .then(data => {
     return data.json()
   })
@@ -55,22 +103,20 @@ fetch('/web_service/obtenerParadas.php?trayectoria_id=1,2')
       iconUrl: 'img/iconos/bus.png',
       iconSize: [38, 38], // size of the icon
     });
-    for (var i = 0; i < data.length; i++) {
-      mr.push(L.marker([data[i].latitud, data[i].longitud], {
-        icon: busIcon
-      }).bindPopup(data[i].nombre));
-    }
-    var layerGroup = L.layerGroup(mr);
-    var baseMaps = {
-      "OSM": osmBase,
-      "Satelital": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
-        attribution: 'google'
-      })
-    };
+    console.log(data);
 
-    var overlayMaps = {
-      "Paradas": layerGroup
-    };
+    var nombreTra = "";
+    for (var i = 0; i < data.length; i++) {
+      var mr = [];
+      for (var j = 0; j < data[i].parada.length; j++) {
+        mr.push(L.marker([data[i].parada[j].latitud, data[i].parada[j].longitud], {
+          icon: busIcon
+        }).bindPopup(data[i].parada[j].parada));
+        nombreTra = data[i].parada[j].trayectoria;
+      }
+      var layerGroup = L.layerGroup(mr);
+      overlayMaps[nombreTra] = layerGroup;
+    }
     L.control.layers(baseMaps, overlayMaps, {
       position: 'topleft', // 'topleft', 'bottomleft', 'bottomright'
       collapsed: true // true
@@ -196,7 +242,6 @@ function historial(id) {
 }
 
 function cargarAsignados() {
-  var storeMoviles = localStorage.getItem("moviles");
   var ul, a, contenido, div, h1;
   var asig = document.getElementById('asignados');
   var alertas = document.getElementById('alertas');
@@ -207,14 +252,14 @@ function cargarAsignados() {
   divPanel += '<li class="nav-item"><a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Alertas</a></li></ul>';
   divPanel += '<div class="tab-content"><div class="tab-pane active" id="home" role="tabpanel"></div><div class="tab-pane" id="profile" role="tabpanel"></div></div>';
   document.getElementById('alertas').innerHTML = divPanel;
-  moviles_asignados = JSON.parse(storeMoviles);
+  moviles_asignados = JSON.parse(localStorage.getItem("moviles"));
   for (var i = 0; i < moviles_asignados.length; i++) {
     if (i == 0) {
       moviles += moviles_asignados[i].movil;
-      imeis += ",'" + moviles_asignados[i].imei + "'";
+      imeis += "'" + moviles_asignados[i].imei + "'";
     } else {
       moviles += ',' + moviles_asignados[i].movil;
-      imeis += "'" + moviles_asignados[i].imei + "'";
+      imeis += ",'" + moviles_asignados[i].imei + "'";
     }
     divDispositivos += '<div class="col-sm-12"><h6>' + moviles_asignados[i].movil + '</h6>';
     divDispositivos += '<div class="form-group row" id="' + moviles_asignados[i].movil + '" style="display:None;">';

@@ -46,6 +46,10 @@ function setMapOnAll(map) {
 //   });
 //   markers.push(marker);
 // }
+function guardarMapa() {
+  console.log(shape_for_db);
+  // alert("hola:" + drawnItems);
+}
 // *****************************Agregar Marker leaflet****************************
 function addMarker(location, imei) {
   // var MyIcon = L.Icon.extend({
@@ -152,6 +156,7 @@ function recuperarDatos() {
 // *********************************************************
 function follow(movil) {
   control = 1;
+  ctrfollow = 0;
   setInterval(function() {
     var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
       "-" + currentdate.getDay() + "T" +
@@ -175,9 +180,9 @@ function follow(movil) {
           if (ctrfollow == 0) {
             deleteMarkers();
             addMarker(outerCoords);
-            removeMarkers(data.data[i].lat, data.data[i].lon);
+            calculoDistancia(data.data[i].lat, data.data[i].lon);
           } else {
-            cambiarDistancia(data.data[i].lat, data.data[i].lon);
+            calculoDistancia(data.data[i].lat, data.data[i].lon);
             cambiarPositionFollow(outerCoords);
           }
         }
@@ -187,8 +192,9 @@ function follow(movil) {
   }, 10000);
 }
 
-function cambiarDistancia(lat, lng) {
+function cambiarDistancia(lat, lng, latFin, lngFin) {
   controlR.spliceWaypoints(0, 1, L.latLng(lat, lng));
+  controlR.spliceWaypoints(1, 1, L.latLng(latFin, lngFin));
   map.closePopup();
   // waypoints = [];
   for (var i = 0; i < controlR._routes.length; i++) {

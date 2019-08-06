@@ -8,6 +8,7 @@ var dir, overlayMaps;
 var coords = [];
 var marker;
 var overlayMaps = {};
+var shape_for_db;
 var map = L.map('map'),
   drawnItems = L.featureGroup().addTo(map);
 
@@ -37,7 +38,7 @@ var icon4 = L.icon({
 });
 L.control.scale().addTo(map);
 
-var removeMarkers = function(lati, longi) {
+var calculoDistancia = function(lati, longi) {
   var flag = 0;
   var distI = 0,
     distF = 0;
@@ -59,7 +60,14 @@ var removeMarkers = function(lati, longi) {
       }
     });
   }
-  distancia(lati, longi, latF, longF);
+  if (ctrfollow == 0) {
+    alert("Parada mas cercana a: " + distI);
+    distancia(lati, longi, latF, longF);
+  } else {
+    alert("Parada mas cercana a: " + distI);
+    cambiarDistancia(lati, longi, latF, longF);
+  }
+
 }
 var getKilometros = function(lat1, lon1, lat2, lon2) {
   rad = function(x) {
@@ -146,16 +154,33 @@ map.on(L.Draw.Event.CREATED, function(event) {
   var layer = event.layer;
   drawnItems.addLayer(layer);
 });
+map.on('draw:created', function(e) {
+  layer = e.layer;
+  console.log(e);
+  if (e.layerType === 'marker') {
+    var lat = layer.getLatLng().lat;
+    var lng = layer.getLatLng().lng;
+    console.log(e);
+  }
+});
 map.on('zoomend', function() {
-  if (marker != null) {
+  if (markers != null) {
     if (map.getZoom() <= 20 && map.getZoom() > 15) {
-      marker.setIcon(icon);
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon);
+      }
     } else if (map.getZoom() <= 15 && map.getZoom() > 10) {
-      marker.setIcon(icon2);
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon2);
+      }
     } else if (map.getZoom() <= 10 && map.getZoom() > 5) {
-      marker.setIcon(icon3);
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon3);
+      }
     } else if (map.getZoom() <= 5 && map.getZoom() >= 1) {
-      marker.setIcon(icon4);
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon4);
+      }
     }
   }
 });
@@ -165,6 +190,7 @@ function initMapa() {
     window.location.href = "index.html";
   } else if (window.localStorage["login"] == '1') {
     // iniciarMapa();
+    document.getElementById('nombreI').innerHTML = localStorage.getItem('Usuario');
     cargarAsignados();
     mapaAsignados();
     recuperarDatos();
@@ -172,7 +198,7 @@ function initMapa() {
 }
 
 function cancelar(id) {
-  deleteMarkers();
+  // deleteMarkers();
   document.getElementById("tablaHistorial").style.display = "None";
   document.getElementById(id.id).style.display = "None";
   var tbody = document.getElementById("cuerpoTabla");

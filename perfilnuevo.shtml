@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Visor Startel </title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="JSApi/Login.js"></script>
+  <script src="JSApi/Config.js"></script>
+  <script src="JSApi/guardar.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+
+<body onload="cargarGrupo()">
+  <!--#include file="menu.html" -->
+  <div class="container">
+
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
+      <input type="text" class="form-control" id="nombre" name="nombre">
+    </div>
+    <div class="form-group">
+      <label for="descripcion">Descripcion</label>
+      <textarea class="form-control" aria-label="With textarea" id="descripcion" name="descripcion"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="perfil">Nivel</label>
+      <select class="custom-select" id="selectNivel" aria-label="Example select with button addon">
+        <option selected>Choose...</option>
+        <option value="1">Administrador</option>
+        <option value="2">Normal</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="grupo">Grupo</label>
+      <select class="custom-select" id="selectGrupo" aria-label="Example select with button addon">
+        <option selected>Choose...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="button" onclick="grabarPerfil();" class="btn btn-secondary">Guardar</button>
+      <button type="button" onclick="cancelar();" class="btn btn-danger">Cancelar</button>
+    </div>
+
+  </div>
+</body>
+
+</html>

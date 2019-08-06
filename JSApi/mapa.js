@@ -7,7 +7,7 @@ var control = 0;
 
 function initMap() {
   cargarAsignados();
-  // document.getElementById('nombreI').value = "Carlos";
+  document.getElementById('nombreI').value = "Carlos";
   document.getElementById('nombreI').innerHTML = "Carlos";
   var pos
   var trafficLayer = new google.maps.TrafficLayer();

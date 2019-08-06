@@ -72,6 +72,7 @@
 
   <div id="map">
   </div>
+  <a onclick="guardarMapa();" id='export'>Guardar</a>
   <div id="controls">
     <div class="wrapper">
       <div id="panel-scrolling" class="panel">

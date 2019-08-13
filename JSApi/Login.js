@@ -19,7 +19,9 @@ function apiLogin() {
           localStorage.setItem('Usuario', data[i].Usuario.Usuario);
           localStorage.setItem('Nombre', data[i].Usuario.Nombre);
           localStorage.setItem('Apellido', data[i].Usuario.Apellido);
+          localStorage.setItem('IdPerfil', data[i].Usuario.IdPerfil);
           localStorage.setItem('Perfil', data[i].Usuario.Perfil);
+          localStorage.setItem('IdGrupo', data[i].Usuario.IdGrupo);
           localStorage.setItem('Grupo', data[i].Usuario.Grupo);
           // sessionStorage.setItem("name", data[i].name);
 

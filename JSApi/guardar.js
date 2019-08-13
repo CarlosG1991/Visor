@@ -24,6 +24,49 @@ function grabarGrupo() {
     });
 }
 
+function cargarUsuarios() {
+  var tabla = document.getElementById("bodyUsuario");
+  var tr = document.createElement('tr');
+  var td = document.createElement('td');
+  var td1 = document.createElement('td');
+  var td2 = document.createElement('td');
+  var td3 = document.createElement('td');
+  var td4 = document.createElement('td');
+  var td5 = document.createElement('td');
+  var td6 = document.createElement('td');
+  var contenido = '';
+  fetch('/web_service/obtenerUsuarios.php?idGrupo=53')
+    .then(data => {
+      return data.json()
+    })
+    .then(data => {
+      for (var i = 0; i < data.length; i++) {
+        contenido = document.createTextNode(data[i].id);
+        td.appendChild(contenido);
+        tr.appendChild(td);
+        contenido = document.createTextNode(data[i].nombre);
+        td1.appendChild(contenido);
+        tr.appendChild(td1);
+        contenido = document.createTextNode(data[i].apellido);
+        td2.appendChild(contenido);
+        tr.appendChild(td2);
+        contenido = document.createTextNode(data[i].email);
+        td3.appendChild(contenido);
+        tr.appendChild(td3);
+        contenido = document.createTextNode(data[i].mobile);
+        td4.appendChild(contenido);
+        tr.appendChild(td4);
+        contenido = document.createTextNode(data[i].perfil);
+        td5.appendChild(contenido);
+        tr.appendChild(td5);
+        contenido = document.createTextNode(data[i].grupo);
+        td6.appendChild(contenido);
+        tr.appendChild(td6);
+        tabla.appendChild(tr);
+      }
+    });
+}
+
 function cargarPerfil() {
   var x = document.getElementById("selectPerfil");
   fetch('/web_service/obtenerPerfil.php?valor=1')
@@ -78,6 +121,16 @@ function grabarPerfil() {
     });
 }
 
+function crearUsuario() {
+  document.getElementById("pnlTabla").style.display = "None";
+  document.getElementById("pnlFormulario").style.display = "";
+}
+
+function cancelarUsuario() {
+  document.getElementById("pnlTabla").style.display = "";
+  document.getElementById("pnlFormulario").style.display = "None";
+}
+
 function grabarUsuario() {
   var nombre = document.getElementById('nombre').value;
   var apellido = document.getElementById('apellido').value;
@@ -110,4 +163,12 @@ function grabarUsuario() {
         document.getElementById('perfil').value = "";
       }
     });
+}
+
+function eliminarUs(id){
+  
+}
+
+function editarUs(id){
+  
 }

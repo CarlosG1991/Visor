@@ -1,11 +1,16 @@
 function grabarGrupo() {
+  var id = document.getElementById('id').value;
   var nombre = document.getElementById('nombre').value;
   var direccion = document.getElementById('direccion').value;
   var compania = document.getElementById('compania').value;
   var email = document.getElementById('email').value;
   var representante = document.getElementById('representante').value;
   var telefono = document.getElementById('telefono').value;
-  fetch('/web_service/crear_grupo.php?nombre=' + nombre + '&direc=' + direccion + '&compania=' + compania + '&email=' + email + '&representante=' + representante + '&telefono=' + telefono)
+  var nivel = document.getElementById('selectNivel').value;
+  if (!id) {
+    id = 0;
+  }
+  fetch('/web_service/Grupo/crear_grupo.php?id=' + id + '&nombre=' + nombre + '&direc=' + direccion + '&compania=' + compania + '&email=' + email + '&representante=' + representante + '&telefono=' + telefono + '&nivel=' + nivel)
     .then(data => {
       return data.json()
     })
@@ -14,28 +19,55 @@ function grabarGrupo() {
         alert("La informacion no se a podido guardar");
       } else {
         alert("La informacion a sido guardado");
+        document.getElementById('id').value = "";
         document.getElementById('nombre').value = "";
         document.getElementById('direccion').value = "";
         document.getElementById('compania').value = "";
         document.getElementById('email').value = "";
         document.getElementById('representante').value = "";
         document.getElementById('telefono').value = "";
+        document.getElementById('selectNivel').value = "";
+        location.reload();
       }
     });
 }
+function crearGrupo() {
+  document.getElementById("pnlTabla").style.display = "None";
+  document.getElementById("pnlFormulario").style.display = "";
+}
 
-function cargarGrupo() {
-  var x = document.getElementById("selectGrupo");
-  fetch('/web_service/obtenerPerfil.php?valor=2')
+function cancelarGrupo() {
+  document.getElementById("pnlTabla").style.display = "";
+  document.getElementById("pnlFormulario").style.display = "None";
+  document.getElementById('id').value = "";
+  document.getElementById('nombre').value = "";
+  document.getElementById('direccion').value = "";
+  document.getElementById('compania').value = "";
+  document.getElementById('email').value = "";
+  document.getElementById('representante').value = "";
+  document.getElementById('telefono').value = "";
+  document.getElementById('selectNivel').value = "";
+}
+
+function editarGr(id) {
+  document.getElementById("pnlTabla").style.display = "None";
+  document.getElementById("pnlFormulario").style.display = "";
+  fetch('/web_service/Grupo/ConsultaPerfil.php?id=' + id)
     .then(data => {
       return data.json()
     })
     .then(data => {
       for (var i = 0; i < data.length; i++) {
-        var option = document.createElement("option");
-        option.text = data[i].nombre;
-        option.value = data[i].id;
-        x.add(option);
+        document.getElementById('id').value = data[i].id;
+        document.getElementById('nombre').value = data[i].perfil;
+        document.getElementById('descripcion').value = data[i].descrip;
+        document.getElementById('selectNivel').value = data[i].nivel;
       }
     });
+}
+function eliminarGrupo(id) {
+  var r = confirm("Desea eliminar el registro?");
+  if (r == true) {
+
+  }
 }

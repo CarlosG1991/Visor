@@ -103,7 +103,10 @@ function grabarUsuario() {
 }
 
 function eliminarUs(id) {
+    var r = confirm("Desea eliminar el registro?");
+    if (r == true) {
 
+    }
 }
 
 function editarUs(id) {

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Visor Startel </title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="JSApi/Login.js"></script>
+  <script src="JSApi/Config.js"></script>
+  <script src="JSApi/Movil.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
+  <script src="js/bootstrap.min.js"></script>
+
+</head>
+
+<!-- <body onload="cargarUsuarios()"> -->
+
+<body>
+  <!--#include file="menu.html" -->
+  <div class="container">
+    <div id="pnlTabla" class="panel">
+      <button type="button" onclick="crearMovil();" class="btn btn-secondary">Crear Nuevo Movil</button>
+
+      <table id="device" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Alias</th>
+            <th>Dispositivo</th>
+            <th>Movil</th>
+            <th>Editar</th>
+          </tr>
+        </thead>
+        <tbody id="bodyDevice">
+        </tbody>
+      </table>
+    </div>
+    <div id="pnlFormulario" style="display:None;">
+      <div class="form-group">
+        <label for="id" style="display:None;">Id</label>
+        <input type="text" class="form-control" id="id" name="id" style="display:None;">
+      </div>
+      <div class="form-group">
+        <label for="alias">Alias</label>
+        <input type="text" class="form-control" id="alias" name="alias">
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripcion</label>
+        <input type="text" class="form-control" id="descripcion" name="descripcion">
+      </div>
+      <div class="form-group">
+        <label for="dispositivo">Dispositivo</label>
+        <input type="text" class="form-control" id="dispositivo" name="dispositivo">
+      </div>
+      <div class="form-group">
+        <label for="marca">Marca</label>
+        <input type="text" class="form-control" id="marca" name="marca">
+      </div>
+      <div class="form-group">
+        <label for="modelo">Modelo</label>
+        <input type="text" class="form-control" id="modelo" name="modelo">
+      </div>
+      <div class="form-group">
+        <label for="fechai">Fecha de instalacion</label>
+        <input class="form-control" type="datetime" id="fechai" name="fechai"></input>
+      </div>
+      <div class="form-group">
+        <label for="movil">Movil</label>
+        <input type="text" class="form-control" id="movil" name="movil">
+      </div>
+      <div class="form-group">
+        <label for="marcamo">Marca de Movil</label>
+        <input type="text" class="form-control" id="marcamo" name="marcamo">
+      </div>
+      <div class="form-group">
+        <label for="chasis">Chasis</label>
+        <input type="text" class="form-control" id="chasis" name="chasis">
+      </div>      
+      <div class="form-group">
+        <label for="color">Color</label>
+        <input type="text" class="form-control" id="color" name="color">
+      </div>
+      <div class="form-group">
+        <label for="modelomo">Modelo Movil</label>
+        <input type="text" class="form-control" id="modelomo" name="modelomo">
+      </div>
+      <div class="form-group">
+        <label for="propietario">Propietario</label>
+        <input type="text" class="form-control" id="propietario" name="propietario">
+      </div>
+       <div class="form-group">
+         <label for="tipo">Tipo</label>
+         <input type="text" class="form-control" id="tipo" name="tipo">
+       </div>
+      <div class="form-group">
+        <label for="ciudadPlaca">Ciudad de la placa</label>
+        <input type="text" class="form-control" id="ciudadPlaca" name="ciudadPlaca">
+      </div>
+      <div class="form-group">
+        <label for="estado">Estado</label>
+        <select class="custom-select" id="estado" aria-label="Example select with button addon">
+          <option selected value="">Elegir...</option>
+          <option value="1">Habilitado</option>
+          <option value="2">Deshabilitado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="button" onclick="grabarMovil();" class="btn btn-secondary">Guardar</button>
+        <button type="button" onclick="cancelarMovil();" class="btn btn-danger">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var idGrupo = localStorage.getItem('IdGrupo');
+      console.log(idGrupo);
+      var tabla = document.getElementById("bodyDevice");
+      $.getJSON('/web_service/Movil/obtenerMovil.php?idGrupo=' + idGrupo, {
+          format: "json"
+        },
+        function (preguntas) {
+          var string = "";
+          for (let index = 0; index < preguntas.length; index++) {
+            string += "<tr><td>" + preguntas[index].id + "</td>";
+            string += "<td>" + preguntas[index].alias + "</td>";
+            string += "<td>" + preguntas[index].device + "</td>";
+            string += "<td>" + preguntas[index].movil + "</td>";
+            string +=
+              "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarMo(" +
+              preguntas[index]
+              .id + ")'><span class='far fa-trash-alt' aria-hidden='true'></span></button>";
+            string += "<button type='button' class='btn btn-default'  onclick='editarMo(" + preguntas[index].id +
+              ")'><span class='far fa-edit' aria-hidden='true'></span></button></div></td></tr>";
+          }
+          tabla.innerHTML = string;
+          $('#device').DataTable();
+        });
+    });
+  </script>
+</body>
+
+</html>

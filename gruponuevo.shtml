@@ -8,46 +8,116 @@
   <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="JSApi/Login.js"></script>
   <script src="JSApi/Config.js"></script>
-  <script src="JSApi/guardar.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="JSApi/Grupo.js"></script>
+  <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
   <script src="js/bootstrap.min.js"></script>
 </head>
 
 <body>
   <!--#include file="menu.html" -->
   <div class="container">
-
-    <div class="form-group">
-      <label for="nombre">Nombre</label>
-      <input type="text" class="form-control" id="nombre" id="nombre">
+    <div id="pnlTabla" class="panel">
+      <button type="button" onclick="crearGrupo();" class="btn btn-secondary">Crear Nuevo Grupo</button>
+      <table id="grupo" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Direccion</th>
+            <th>Compañia</th>
+            <th>Email</th>
+            <th>Representante</th>
+            <th>Telefono</th>
+            <th>Estado</th>
+            <th>Editar</th>
+          </tr>
+        </thead>
+        <tbody id="bodyGrupo">
+        </tbody>
+      </table>
     </div>
-    <div class="form-group">
-      <label for="direccion">Direccion</label>
-      <input type="text" class="form-control" id="direccion" name="direccion">
+    <div id="pnlFormulario" class="panel" style="display:None;">
+      <div class="form-group">
+        <label for="id" style="display:None;">Id</label>
+        <input type="text" class="form-control" id="id" name="id" style="display:None;">
+      </div>
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" class="form-control" id="nombre" id="nombre">
+      </div>
+      <div class="form-group">
+        <label for="direccion">Direccion</label>
+        <input type="text" class="form-control" id="direccion" name="direccion">
+      </div>
+      <div class="form-group">
+        <label for="compania">Compañia</label>
+        <input type="text" class="form-control" id="compania" id="compania">
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" id="email">
+      </div>
+      <div class="form-group">
+        <label for="representante">Representante</label>
+        <input type="text" class="form-control" id="representante" id="representante">
+      </div>
+      <div class="form-group">
+        <label for="telefono">Telefono</label>
+        <input type="text" class="form-control" id="telefono" id="telefono">
+      </div>
+      <div class="form-group">
+        <label for="perfil">Nivel</label>
+        <select class="custom-select" id="selectNivel">
+          <option selected value="">Elegir...</option>
+          <option value="1">Administrador</option>
+          <option value="2">Usuario</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="button" onclick="grabarGrupo();" class="btn btn-secondary">Guardar</button>
+        <button type="button" onclick="cancelarGrupo();" class="btn btn-danger">Cancelar</button>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="compania">Compañia</label>
-      <input type="text" class="form-control" id="compania" id="compania">
-    </div>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" class="form-control" id="email" id="email">
-    </div>
-    <div class="form-group">
-      <label for="representante">Representante</label>
-      <input type="text" class="form-control" id="representante" id="representante">
-    </div>
-    <div class="form-group">
-      <label for="telefono">Telefono</label>
-      <input type="text" class="form-control" id="telefono" id="telefono">
-    </div>
-    <div class="form-group">
-      <button type="button" onclick="grabarGrupo();" class="btn btn-secondary">Guardar</button>
-      <button type="button" onclick="cancelar();" class="btn btn-danger">Cancelar</button>
-    </div>
-
   </div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var idGrupo = localStorage.getItem('IdGrupo');
+      var tabla = document.getElementById("bodyGrupo");
+      $.getJSON('/web_service/Grupo/obtenerGrupo.php', {
+          format: "json"
+        },
+        function (preguntas) {
+          var string = "";
+          var nivel = "";
+          for (let index = 0; index < preguntas.length; index++) {
+            if (preguntas[index].nivel == 1) {
+              nivel = "Administrador";
+            } else {
+              nivel = "Usuario";
+            }
+            string += "<tr><td>" + preguntas[index].id + "</td>";
+            string += "<td>" + preguntas[index].nombre + "</td>";
+            string += "<td>" + preguntas[index].direccion + "</td>";
+            string += "<td>" + preguntas[index].compania + "</td>";
+            string += "<td>" + preguntas[index].email + "</td>";
+            string += "<td>" + preguntas[index].representante + "</td>";
+            string += "<td>" + preguntas[index].telefono + "</td>";
+            string += "<td>" + nivel + "</td>";
+            string += "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarGr(" + preguntas[index]
+              .id + ")'><span class='far fa-trash-alt' aria-hidden='true'></span></button>";
+            string += "<button type='button' class='btn btn-default'  onclick='editarGr(" + preguntas[index].id +
+              ")'><span class='far fa-edit' aria-hidden='true'></span></button></div></td></tr>";
+          }
+          tabla.innerHTML = string;
+          $('#grupo').DataTable();
+        });
+    });
+  
+  </script>
 </body>
 
 </html>

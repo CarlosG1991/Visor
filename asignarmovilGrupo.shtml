@@ -25,8 +25,8 @@
     <div id="pnlTabla" class="panel">
       <button type="button" onclick="asginarMoviles();" class="btn btn-secondary">Asignar Moviles</button>
       <div class="form-group">
-        <label for="selectUsuario">Usiuario</label>
-        <select class="custom-select" id="selectUsuario">
+        <label for="selectGrupo">Grupo</label>
+        <select class="custom-select" id="selectGrupo">
           <option selected value="">Elegir...</option>
         </select>
       </div>

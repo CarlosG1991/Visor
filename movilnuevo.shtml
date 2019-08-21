@@ -9,6 +9,7 @@
   <script src="JSApi/Login.js"></script>
   <script src="JSApi/Config.js"></script>
   <script src="JSApi/Movil.js"></script>
+  <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
@@ -52,6 +53,7 @@
         <label for="descripcion">Descripcion</label>
         <input type="text" class="form-control" id="descripcion" name="descripcion">
       </div>
+      <h1>Dispositivo</h1>
       <div class="form-group">
         <label for="dispositivo">Dispositivo</label>
         <input type="text" class="form-control" id="dispositivo" name="dispositivo">
@@ -64,10 +66,37 @@
         <label for="modelo">Modelo</label>
         <input type="text" class="form-control" id="modelo" name="modelo">
       </div>
+      <h1>Motor</h1>
+      <div class="form-group">
+        <label for="marcaMot">Marca</label>
+        <input type="text" class="form-control" id="marcaMot" name="marcaMot">
+      </div>
+      <div class="form-group">
+        <label for="modeloMot">Modelo</label>
+        <input type="text" class="form-control" id="modeloMot" name="modeloMot">
+      </div>
+      <div class="form-group">
+        <label for="numero">Numero</label>
+        <input type="number" class="form-control" id="numero" name="numero">
+      </div>
+      <h1>Datos</h1>
+      <div class="form-group">
+        <label for="combusCon">Consumo de Combustible</label>
+        <input type="number" class="form-control" id="combusCon" name="combusCon">
+      </div>
+      <div class="form-group">
+        <label for="capaciCom">Capacidad de Combustible</label>
+        <input type="number" class="form-control" id="capaciCom" name="capaciCom">
+      </div>
+      <div class="form-group">
+        <label for="unidadCom">Unidad de medida de Combustible</label>
+        <input type="text" class="form-control" id="unidadCom" name="unidadCom">
+      </div>
       <div class="form-group">
         <label for="fechai">Fecha de instalacion</label>
-        <input class="form-control" type="datetime" id="fechai" name="fechai"></input>
+        <input class="form-control" type="date" id="fechai" name="fechai"></input>
       </div>
+      <h1>Vehiculo</h1>
       <div class="form-group">
         <label for="movil">Movil</label>
         <input type="text" class="form-control" id="movil" name="movil">
@@ -122,18 +151,18 @@
       $.getJSON('/web_service/Movil/obtenerMovil.php?idGrupo=' + idGrupo, {
           format: "json"
         },
-        function (preguntas) {
+        function (moviles) {
           var string = "";
-          for (let index = 0; index < preguntas.length; index++) {
-            string += "<tr><td>" + preguntas[index].id + "</td>";
-            string += "<td>" + preguntas[index].alias + "</td>";
-            string += "<td>" + preguntas[index].device + "</td>";
-            string += "<td>" + preguntas[index].movil + "</td>";
+          for (let index = 0; index < moviles.length; index++) {
+            string += "<tr><td>" + moviles[index].id + "</td>";
+            string += "<td>" + moviles[index].alias + "</td>";
+            string += "<td>" + moviles[index].device + "</td>";
+            string += "<td>" + moviles[index].movil + "</td>";
             string +=
               "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarMo(" +
-              preguntas[index]
+              moviles[index]
               .id + ")'><span class='far fa-trash-alt' aria-hidden='true'></span></button>";
-            string += "<button type='button' class='btn btn-default'  onclick='editarMo(" + preguntas[index].id +
+            string += "<button type='button' class='btn btn-default'  onclick='editarMo(" + moviles[index].id +
               ")'><span class='far fa-edit' aria-hidden='true'></span></button></div></td></tr>";
           }
           tabla.innerHTML = string;

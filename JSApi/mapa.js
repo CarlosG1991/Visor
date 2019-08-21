@@ -154,7 +154,7 @@ function cargarAsignados() {
   moviles_asignados = sessionStorage.getItem("movil_assign_user");
   var arrayMovil = moviles_asignados.split(', ');
   var ul, a, contenido, div, h1;
-  var asig = document.getElementById('asignados');
+  
   var alertas = document.getElementById('alertas');
   var divPanel = '';
   var divDispositivos = '';
@@ -176,15 +176,8 @@ function cargarAsignados() {
     divDispositivos += "<button class='btn btn-lg'";
     divDispositivos += 'onclick="javascript:historial(' + arrayMovil[i] + ');"';
     divDispositivos += "style='background-color:transparent;'><i class='fa fa-history'></i></button>";
-    divDispositivos += "<button class='btn btn-lg' onclick='follow(" + arrayMovil[i] + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
-    ul = document.createElement('ul');
-    a = document.createElement('a');
-    contenido = document.createTextNode(arrayMovil[i]);
-    a.appendChild(contenido);
-    ul.appendChild(a);
-    asig.appendChild(ul);
-    console.log(arrayMovil[i]);
-    // document.getElementById(relacion + condicion + '1').style.display = "none";
+    divDispositivos += "<button class='btn btn-lg' onclick='follow(" + arrayMovil[i] + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";    
+    
   }
   document.getElementById('home').innerHTML = divDispositivos;
 }

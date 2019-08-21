@@ -102,7 +102,7 @@ var baseMaps = {
     attribution: 'google'
   })
 };
-fetch('/web_service/obtenerParadas.php?trayectoria_id=' + idTra)
+fetch('/web_service/Mapa/obtenerParadas.php?trayectoria_id=' + idTra)
   .then(data => {
     return data.json()
   })
@@ -267,9 +267,7 @@ function historial(id) {
   document.getElementById(id.id).style.display = "";
 }
 
-function cargarAsignados() {
-  var ul, a, contenido, div, h1;
-  var asig = document.getElementById('asignados');
+function cargarAsignados() {  
   var alertas = document.getElementById('alertas');
   var divPanel = '';
   var divDispositivos = '';
@@ -298,12 +296,7 @@ function cargarAsignados() {
     divDispositivos += 'onclick="javascript:historial(' + moviles_asignados[i].movil + ');"';
     divDispositivos += "style='background-color:transparent;'><i class='fa fa-history'></i></button>";
     divDispositivos += "<button class='btn btn-lg' onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
-    ul = document.createElement('ul');
-    a = document.createElement('a');
-    contenido = document.createTextNode(moviles_asignados[i].movil);
-    a.appendChild(contenido);
-    ul.appendChild(a);
-    asig.appendChild(ul);
+    
   }
   document.getElementById('home').innerHTML = divDispositivos;
 }

@@ -52,15 +52,19 @@ function cancelarGrupo() {
 function editarGr(id) {
   document.getElementById("pnlTabla").style.display = "None";
   document.getElementById("pnlFormulario").style.display = "";
-  fetch('/web_service/Grupo/ConsultaPerfil.php?id=' + id)
+  fetch('/web_service/Grupo/ConsultaGrupo.php?id=' + id)
     .then(data => {
       return data.json()
     })
     .then(data => {
       for (var i = 0; i < data.length; i++) {
         document.getElementById('id').value = data[i].id;
-        document.getElementById('nombre').value = data[i].perfil;
-        document.getElementById('descripcion').value = data[i].descrip;
+        document.getElementById('nombre').value = data[i].nombre;
+        document.getElementById('direccion').value = data[i].direccion;
+        document.getElementById('compania').value = data[i].compania;
+        document.getElementById('email').value = data[i].email;
+        document.getElementById('representante').value = data[i].representante;
+        document.getElementById('telefono').value = data[i].telefono;
         document.getElementById('selectNivel').value = data[i].nivel;
       }
     });

@@ -114,15 +114,21 @@ function deleteMarkers() {
 // *********************************************************************************
 // **********************************Obtener datos desde la base********************
 function recuperarDatos() {
-  setInterval(function() {
+  var imei = '';
+  setInterval(function () {
     if (control == 0) {
       var contenedor = document.getElementById('profile')
       var div, a;
       var divDispositivos = '';
-      imei = sessionStorage.getItem("imei");
-      var ruta = '';
-      var alert = '';
-      fetch('/web_service/obtenerDatos.php?imei=' + imei)
+      traAsiganada = JSON.parse(localStorage.getItem("moviles"));
+      for (var i = 0; i < traAsiganada.length; i++) {
+        if (i == 0) {
+          imei += "'" + traAsiganada[i].imei + "'";
+        } else {
+          imei += "," + "'" + traAsiganada[i].imei + "'";
+        }
+      }            
+      fetch('/web_service/Mapa/obtenerDatos.php?imei=' + imei)
         .then(data => {
           return data.json()
         })
@@ -145,8 +151,7 @@ function recuperarDatos() {
               div.appendChild(a);
               contenedor.appendChild(div);
             }
-            cambiarPosition(outerCoords, data[i].unit);
-            // addMarker(outerCoords);
+            cambiarPosition(outerCoords, data[i].unit);            
           }
           localizar();
         })
@@ -157,16 +162,16 @@ function recuperarDatos() {
 function follow(movil) {
   control = 1;
   ctrfollow = 0;
-  setInterval(function() {
+  setInterval(function () {
     var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
       "-" + currentdate.getDay() + "T" +
       currentdate.getHours() + ":" +
       currentdate.getMinutes() + ":" + currentdate.getSeconds();
     fetch('https://api.gservicetrack.com/follow/raptortrack?limit=25&start=0&movil=' + movil.id + '&date>=' + fecha, {
-        headers: {
-          "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-        }
-      })
+      headers: {
+        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+      }
+    })
       .then(data => {
         return data.json()
       })
@@ -203,7 +208,7 @@ function cambiarDistancia(lat, lng, latFin, lngFin) {
     });
   }
   if (waypoints.length >= 2) {
-    router.route(waypoints, function(err, routes) {
+    router.route(waypoints, function (err, routes) {
       if (err) {
         // alert(err);
         console.log(err);
@@ -229,20 +234,20 @@ function distancia(lat, lng, latF, lngF) {
     collapsed: true,
     altLineOptions: {
       styles: [{
-          color: 'black',
-          opacity: 0.15,
-          weight: 9
-        },
-        {
-          color: 'white',
-          opacity: 0.8,
-          weight: 6
-        },
-        {
-          color: 'blue',
-          opacity: 0.5,
-          weight: 2
-        }
+        color: 'black',
+        opacity: 0.15,
+        weight: 9
+      },
+      {
+        color: 'white',
+        opacity: 0.8,
+        weight: 6
+      },
+      {
+        color: 'blue',
+        opacity: 0.5,
+        weight: 2
+      }
       ]
     }
   })).addTo(map);
@@ -280,7 +285,7 @@ function recuperarHistorial(bearer_token, movil, date) {
       console.log('Created Gist:', data)
       var gejos = convertir(data)
       let geoJsonlayer = L.geoJson(gejos, {
-        onEachFeature: function(feature, layer) {
+        onEachFeature: function (feature, layer) {
           layer.bindPopup(feature.properties['movil'])
         }
       }).addTo(map)
@@ -291,10 +296,10 @@ function recuperarHistorial(bearer_token, movil, date) {
 
 function obtener() {
   fetch('https://api.gservicetrack.com/groups/raptortrack', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -305,10 +310,10 @@ function obtener() {
 
 function recuperarVelicidadMaxima(movil) {
   fetch('https://api.gservicetrack.com/maxspeedalert/raptortrack?limit=25&start=0&movil=' + movil, {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -319,10 +324,10 @@ function recuperarVelicidadMaxima(movil) {
 
 function recuperarVelicidad() {
   fetch('https://api.gservicetrack.com/maxspeedalert/raptortrack?limit=25&start=0', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -333,10 +338,10 @@ function recuperarVelicidad() {
 
 function recuperarConductores() {
   fetch('https://api.gservicetrack.com/driver/raptortrack?limit=25&start=0', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -347,10 +352,10 @@ function recuperarConductores() {
 
 function recuperarEventos() {
   fetch('https://api.gservicetrack.com/avlevent/raptortrack?limit=25&start=0&sort=model', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -361,10 +366,10 @@ function recuperarEventos() {
 
 function recuperarUsuarioMovil() {
   fetch('https://api.gservicetrack.com/usermovil/raptortrack?limit=25&start=0&sort=group_name', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -376,10 +381,10 @@ function recuperarUsuarioMovil() {
 
 function recuperarGrupoMovil() {
   fetch('https://api.gservicetrack.com/groupmovil/raptortrack?limit=25&start=0&sort=group_name', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -391,10 +396,10 @@ function recuperarGrupoMovil() {
 
 function recuperarMoviles() {
   fetch('https://api.gservicetrack.com/movils/raptortrack?limit=100&start=0&sort=movil', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -407,10 +412,10 @@ function recuperarMoviles() {
 
 function recuperarDispositivos() {
   fetch('https://api.gservicetrack.com/devices/raptortrack?limit=25&start=0&sort=device', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -422,10 +427,10 @@ function recuperarDispositivos() {
 
 function recuperarUsuarios() {
   fetch('https://api.gservicetrack.com/users/raptortrack?limit=25&start=0&sort=name', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -437,10 +442,10 @@ function recuperarUsuarios() {
 
 function recuperarPerfiles() {
   fetch('https://api.gservicetrack.com/profiles/raptortrack?limit=25&start=0&sort=name', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -452,10 +457,10 @@ function recuperarPerfiles() {
 
 function recuperarGrupos() {
   fetch('https://api.gservicetrack.com/groups/raptortrack', {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })
@@ -467,10 +472,10 @@ function recuperarGrupos() {
 
 function ultimaPosicion(movil, fecha) {
   fetch('https://api.gservicetrack.com/lastposition/raptortrack?limit=25&start=0&movil=' + movil + '&date=' + fecha, {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    headers: {
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
+    }
+  })
     .then(data => {
       return data.json()
     })

@@ -9,18 +9,28 @@
   <script src="JSApi/Login.js"></script>
   <script src="JSApi/Config.js"></script>
   <script src="JSApi/Usuario.js"></script>
+  <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
   <script src="js/bootstrap.min.js"></script>
-
+  <script>
+    $(function () {
+      let nivel = localStorage.getItem('Nivel');
+      if (nivel == "1") {
+        $("#DivContent").load("menu.html");
+      } else if (nivel == "2") {
+        $("#DivContent").load("menuAdmGrupo.html");
+      } else if (nivel == "3") {
+        $("#DivContent").load("menuUsuario.html");
+      }
+    });
+  </script>
 </head>
 
-<!-- <body onload="cargarUsuarios()"> -->
-
 <body>
-  <!--#include file="menu.html" -->
+  <div id="DivContent"></div>
   <div class="container">
     <div id="pnlTabla" class="panel">
       <button type="button" onclick="crearUsuario();" class="btn btn-secondary">Crear Nuevo Usuario</button>
@@ -40,17 +50,6 @@
         </thead>
         <tbody id="bodyUsuario">
         </tbody>
-        <!-- <tfoot>
-          <tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Celular</th>
-            <th>Perfil</th>
-            <th>Grupo</th>
-          </tr>
-        </tfoot> -->
       </table>
     </div>
     <div id="pnlFormulario" style="display:None;">
@@ -109,26 +108,29 @@
   <script type="text/javascript">
     $(document).ready(function () {
       var idGrupo = localStorage.getItem('IdGrupo');
-      console.log(idGrupo);      
-      cargarPerfil(idGrupo);      
+      cargarPerfil(idGrupo);
       var tabla = document.getElementById("bodyUsuario");
       $.getJSON('/web_service/Usuarios/obtenerUsuarios.php?idGrupo=' + idGrupo, {
           format: "json"
         },
-        function (preguntas) {          
-          var string="";
-          for (let index = 0; index < preguntas.length; index++) {
-            string += "<tr><td>" + preguntas[index].id + "</td>";
-            string += "<td>" + preguntas[index].nombre + "</td>";
-            string += "<td>" + preguntas[index].apellido + "</td>";
-            string += "<td>" + preguntas[index].email + "</td>";
-            string += "<td>" + preguntas[index].mobile + "</td>";
-            string += "<td>" + preguntas[index].perfil + "</td>";
-            string += "<td>" + preguntas[index].grupo + "</td>";
-            string += "<td><div class='btn-group'><button type='button' onclick='eliminarUs(" + preguntas[index]
-              .id + ")'>X</button>";
-            string += "<button type='button' onclick='editarUs(" + preguntas[index].id +
-              ")'>V</button></div></td></tr>";            
+        function (usuarios) {
+          var string = "";
+          for (let index = 0; index < usuarios.length; index++) {
+            string += "<tr id='filaU" + usuarios[index].id + "'><td>" + usuarios[index].id + "</td>";
+            string += "<td>" + usuarios[index].nombre + "</td>";
+            string += "<td>" + usuarios[index].apellido + "</td>";
+            string += "<td>" + usuarios[index].email + "</td>";
+            string += "<td>" + usuarios[index].mobile + "</td>";
+            string += "<td>" + usuarios[index].perfil + "</td>";
+            string += "<td>" + usuarios[index].grupo + "</td>";
+            
+            string +=
+              "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarUs(" +
+              usuarios[index]
+              .id + ")'><span class='far fa-trash-alt' aria-hidden='true'></span></button>";
+            string += "<button type='button' class='btn btn-default' onclick='editarUs(" + usuarios[index]
+              .id +
+              ")'><span class='far fa-edit' aria-hidden='true'></span></button></div></td></tr>";
           }
           tabla.innerHTML = string;
           $('#usuarios').DataTable();

@@ -103,9 +103,21 @@ function grabarUsuario() {
 }
 
 function eliminarUs(id) {
-    var r = confirm("Desea eliminar el registro?");
+    var r = confirm("Esta seguro que desea eliminar el perfil?, se eliminaran todos los datos anexados a este perfil");
     if (r == true) {
-
+        fetch('/web_service/Usuarios/EliminarUsuarios.php?id=' + id)
+            .then(data => {
+                return data.json()
+            })
+            .then(data => {
+                if (data.length > 0) {
+                    for (let index = 0; index < data.length; index++) {
+                        alert("No se pudo eliminar el registro: " + data[index].Mensaje);
+                    }
+                } else {
+                    $("#filaU" + id).remove();
+                }
+            });
     }
 }
 

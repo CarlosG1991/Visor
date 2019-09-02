@@ -15,12 +15,22 @@
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
   <script src="js/bootstrap.min.js"></script>
+  <script>
+    $(function () {
+      let nivel = localStorage.getItem('Nivel');
+      if (nivel == "1") {
+        $("#DivContent").load("menu.html");
+      } else if (nivel == "2") {
+        $("#DivContent").load("menuAdmGrupo.html");
+      } else if (nivel == "3") {
+        $("#DivContent").load("menuUsuario.html");
+      }
+    });
+  </script>
 </head>
 
-<!-- <body onload="cargarGrupo()"> -->
-
 <body>
-  <!--#include file="menu.html" -->
+  <div id="DivContent"></div>
   <div class="container">
     <div id="pnlTablaPerfil" class="panel">
       <button type="button" onclick="crearPerfil();" class="btn btn-secondary">Crear Nuevo Perfil</button>
@@ -72,22 +82,24 @@
       $.getJSON('/web_service/Perfil/obtenerPerfil.php?idGrupo=' + idGrupo, {
           format: "json"
         },
-        function (preguntas) {
+        function (perfil) {
           var string = "";
           var nivel = "";
-          for (let index = 0; index < preguntas.length; index++) {
-            if (preguntas[index].nivel == 1) {
+          for (let index = 0; index < perfil.length; index++) {
+            if (perfil[index].nivel == 1) {
               nivel = "Administrador";
             } else {
               nivel = "Usuario";
             }
-            string += "<tr><td>" + preguntas[index].id + "</td>";
-            string += "<td>" + preguntas[index].perfil + "</td>";
+            string += "<tr id='filaP" + perfil[index].id + "'><td>" + perfil[index].id + "</td>";
+            string += "<td>" + perfil[index].perfil + "</td>";
             string += "<td>" + nivel + "</td>";
-            string += "<td>" + preguntas[index].grupo + "</td>";            
-            string += "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarPe(" + preguntas[index]
+            string += "<td>" + perfil[index].grupo + "</td>";
+            string +=
+              "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarPe(" +
+              perfil[index]
               .id + ")'><span class='far fa-trash-alt' aria-hidden='true'></span></button>";
-            string += "<button type='button' class='btn btn-default' onclick='editarPe(" + preguntas[index].id +
+            string += "<button type='button' class='btn btn-default' onclick='editarPe(" + perfil[index].id +
               ")'><span class='far fa-edit' aria-hidden='true'></span></button></div></td></tr>";
           }
           tabla.innerHTML = string;

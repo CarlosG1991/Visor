@@ -14,19 +14,34 @@
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
   <script src="js/bootstrap.min.js"></script>
-
+  <script>
+    $(function () {
+      let nivel = localStorage.getItem('Nivel');
+      if (nivel == "1") {
+        $("#DivContent").load("menu.html");
+      } else if (nivel == "2") {
+        $("#DivContent").load("menuAdmGrupo.html");
+      } else if (nivel == "3") {
+        $("#DivContent").load("menuUsuario.html");
+      }
+    });
+  </script>
 </head>
 
-<!-- <body onload="cargarUsuarios()"> -->
-
 <body>
-  <!--#include file="menu.html" -->
+  <div id="DivContent"></div>
   <div class="container">
     <div id="pnlTabla" class="panel">
       <button type="button" onclick="asginarMoviles();" class="btn btn-secondary">Asignar Moviles</button>
       <div class="form-group">
-        <label for="selectGrupo">Grupo</label>
-        <select class="custom-select" id="selectGrupo">
+        <label for="selectUsuarioAsig">Usiuario Actual</label>
+        <select class="custom-select" id="selectUsuarioAsig" onchange="cambioUsuario();">
+          <option selected value="">Elegir...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="selectUsuario">Usiuario</label>
+        <select class="custom-select" id="selectUsuario">
           <option selected value="">Elegir...</option>
         </select>
       </div>
@@ -48,20 +63,22 @@
   <script type="text/javascript">
     $(document).ready(function () {
       var idGrupo = localStorage.getItem('IdGrupo');
-      console.log(idGrupo);
       cargarUsuario(idGrupo);
+      cargarUsuarioAsig(idGrupo);
       var tabla = document.getElementById("bodyDevice");
-      $.getJSON('/web_service/Movil/obtenerMovilAsignar.php?idGrupo=' + idGrupo, {
+      $.getJSON('/web_service/Movil/obtenerMovilAsignar.php?idGrupo=' + idGrupo + '&idUsuario=0', {
           format: "json"
         },
-        function (preguntas) {
+        function (vehiculos) {
           var string = "";
-          for (let index = 0; index < preguntas.length; index++) {
-            string += "<tr><td>" + preguntas[index].id + "</td>";
-            string += "<td>" + preguntas[index].alias + "</td>";
-            string += "<td>" + preguntas[index].device + "</td>";
-            string += "<td>" + preguntas[index].movil + "</td>";
-            string += "<td><div class='form-check form-check-inline'><input type='checkbox' class='form-check-input' id='"+preguntas[index].id+"'></div></td></tr>";
+          for (let index = 0; index < vehiculos.length; index++) {
+            string += "<tr><td>" + vehiculos[index].id + "</td>";
+            string += "<td>" + vehiculos[index].alias + "</td>";
+            string += "<td>" + vehiculos[index].device + "</td>";
+            string += "<td>" + vehiculos[index].movil + "</td>";
+            string +=
+              "<td><div class='form-check form-check-inline'><input type='checkbox' class='form-check-input' id='" +
+              vehiculos[index].id + "'></div></td></tr>";
           }
           tabla.innerHTML = string;
           $('#device').DataTable();

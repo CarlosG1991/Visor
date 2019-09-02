@@ -21,44 +21,12 @@ function setMapOnAll(map) {
   }
 }
 
-// *****************************Agregar Marker Goolgle****************************
-// function addMarker(location) {
-//   var contentString = '<div id="content">' +
-//     '<div id="siteNotice">' +
-//     '</div>' +
-//     '<div id="bodyContent">' +
-//     '<p><a onclick="javascript:follow(movil)">' +
-//     'Seguir Vehiculo</a> ' +
-//     '</p>' +
-//     '</div>' +
-//     '</div>';
-//   var infowindow = new google.maps.InfoWindow({
-//     content: contentString
-//   });
-//
-//   var marker = new google.maps.Marker({
-//     position: location,
-//     map: map,
-//     icon: 'img/iconos/Car1.png'
-//   });
-//   marker.addListener('click', function() {
-//     infowindow.open(map, marker);
-//   });
-//   markers.push(marker);
-// }
 function guardarMapa() {
   console.log(shape_for_db);
   // alert("hola:" + drawnItems);
 }
 // *****************************Agregar Marker leaflet****************************
-function addMarker(location, imei) {
-  // var MyIcon = L.Icon.extend({
-  //   iconUrl: 'img/iconos/Car1.png',
-  //   iconSize: new L.Point(10, 16),
-  //   shadowSize: new L.Point(10, 16),
-  //   iconAnchor: new L.Point(10, 16)
-  // });
-  // var icon = new MyIcon();
+function addMarker(location, imei,angulo) {  
   var contentString = '<div id="content">' +
     '<div id="siteNotice">' +
     '</div>' +
@@ -68,9 +36,14 @@ function addMarker(location, imei) {
     '</p>' +
     '</div>' +
     '</div>';
-  marker = L.marker(location, {
-    title: imei
+  
+  marker = L.marker(location, {    
+    title: imei,
+    rotationAngle: angulo,
+    draggable: true
   }).bindPopup(contentString).addTo(map);
+  
+  //marker.style.transform = "rotate("+90+"deg)";
   markers.push(marker);
 }
 //*****************************Centrar Mapa a Markers*******************************
@@ -91,10 +64,11 @@ function clearMarkers(ime) {
   }
 }
 
-function cambiarPosition(latlng, imei) {
+function cambiarPosition(latlng, imei,angulo) {
   for (var i = 0; i < markers.length; i++) {
     if (markers[i].options.title == imei) {
       markers[i].setLatLng(latlng);
+      markers[i].setRotationAngle(angulo)
     }
   }
 }
@@ -113,56 +87,78 @@ function deleteMarkers() {
 }
 // *********************************************************************************
 // **********************************Obtener datos desde la base********************
-function recuperarDatos() {
-  var imei = '';
-  setInterval(function () {
-    if (control == 0) {
-      var contenedor = document.getElementById('profile')
-      var div, a;
-      var divDispositivos = '';
-      traAsiganada = JSON.parse(localStorage.getItem("moviles"));
-      for (var i = 0; i < traAsiganada.length; i++) {
-        if (i == 0) {
-          imei += "'" + traAsiganada[i].imei + "'";
-        } else {
-          imei += "," + "'" + traAsiganada[i].imei + "'";
+function obtenerDatos(idMovil,item){
+  var contenedor = document.getElementById('profile');
+  var div, a,h5;
+  fetch('/web_service/Mapa/obtenerDatos2.php?imei=' + idMovil)
+    .then(data => {
+      return data.json()
+    })
+    .then(data => {
+      for (i = 0; i < data.length; i++) {
+        //Se divide para un millon para obtener la coordenada en decimal
+        var outerCoords = {
+          lat: (data[i].lat / 1000000),
+          lng: (data[i].long / 1000000)
+        };
+        div = document.createElement('div');
+        a = document.createElement('a');
+        h5 = document.createElement('h20');
+        if (!document.getElementById(data[i].unit + '-' + data[i].alert)) {
+          div.setAttribute('class', 'col-sm-12');
+          div.setAttribute('id', data[i].unit + '-' + data[i].alert);
+          contenido = document.createTextNode(data[i].alert);
+          h5.appendChild(contenido);          
+          a.appendChild(h5);
+          a.setAttribute('onclick', 'acercar(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
+          div.appendChild(a);
+          contenedor.appendChild(div);
         }
-      }            
-      fetch('/web_service/Mapa/obtenerDatos.php?imei=' + imei)
-        .then(data => {
-          return data.json()
-        })
-        .then(data => {
-
-          for (i = 0; i < data.length; i++) {
-            //Se divide para un millon para obtener la coordenada en decimal
-            var outerCoords = {
-              lat: (data[i].lat / 1000000),
-              lng: (data[i].long / 1000000)
-            };
-            div = document.createElement('div');
-            a = document.createElement('a');
-            if (!document.getElementById(data[i].unit + '-' + data[i].alert)) {
-              div.setAttribute('class', 'col-sm-12');
-              div.setAttribute('id', data[i].unit + '-' + data[i].alert);
-              contenido = document.createTextNode(data[i].alert);
-              a.appendChild(contenido);
-              a.setAttribute('onclick', 'acercar(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
-              div.appendChild(a);
-              contenedor.appendChild(div);
-            }
-            cambiarPosition(outerCoords, data[i].unit);            
-          }
-          localizar();
-        })
+        if(item==1){
+          addMarker(outerCoords, data[i].unit, data[i].orientacion);
+        }else{
+          cambiarPosition(outerCoords, data[i].unit, data[i].orientacion);
+        }        
+      }
+      if(item==1){
+        localizar();
+      }      
+    })
+}
+function recuperarDatos() {
+  var imei = '';  
+  traAsiganada = JSON.parse(localStorage.getItem("moviles"));
+  for (var i = 0; i < traAsiganada.length; i++) {
+    if (i == 0) {
+      imei += "'" + traAsiganada[i].id + "'";
+    } else {
+      imei += "," + "'" + traAsiganada[i].id + "'";
+    }
+  }  
+  obtenerDatos(imei,1);
+  setInterval(function () {    
+    if (control == 0) {               
+      obtenerDatos(imei,0);
     }
   }, 20000);
 }
 // *********************************************************
+function tracking(vehiculo){
+  fetch('https://api.gservicetrack.com/remotecommand/raptortrack', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep",
+      'Content-Type': 'application/json'
+    },
+    body: "{\r\n    \"movil\": \"" + vehiculo + "\",\r\n    \"command\": \"1\"\r\n  }"
+  });
+}
 function follow(movil) {
   control = 1;
   ctrfollow = 0;
   setInterval(function () {
+    enviarComando(movil);
     var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
       "-" + currentdate.getDay() + "T" +
       currentdate.getHours() + ":" +
@@ -253,6 +249,17 @@ function distancia(lat, lng, latF, lngF) {
   })).addTo(map);
   L.Routing.errorControl(controlR).addTo(map);
 }
+function enviarComando(){  
+  fetch('https://api.gservicetrack.com/remotecommand/raptortrack', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep",
+      'Content-Type': 'application/json'
+    },
+    body: "{\r\n    \"movil\": \"FV_01\",\r\n    \"command\": \"1\"\r\n  }"
+  });  
+}
 
 function recuperarHistorial(bearer_token, movil, date) {
   var details = {
@@ -292,223 +299,4 @@ function recuperarHistorial(bearer_token, movil, date) {
 
     }
   );
-}
-
-function obtener() {
-  fetch('https://api.gservicetrack.com/groups/raptortrack', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data)
-    })
-}
-
-function recuperarVelicidadMaxima(movil) {
-  fetch('https://api.gservicetrack.com/maxspeedalert/raptortrack?limit=25&start=0&movil=' + movil, {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data)
-    })
-}
-
-function recuperarVelicidad() {
-  fetch('https://api.gservicetrack.com/maxspeedalert/raptortrack?limit=25&start=0', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data)
-    })
-}
-
-function recuperarConductores() {
-  fetch('https://api.gservicetrack.com/driver/raptortrack?limit=25&start=0', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data)
-    })
-}
-
-function recuperarEventos() {
-  fetch('https://api.gservicetrack.com/avlevent/raptortrack?limit=25&start=0&sort=model', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data)
-    })
-}
-
-function recuperarUsuarioMovil() {
-  fetch('https://api.gservicetrack.com/usermovil/raptortrack?limit=25&start=0&sort=group_name', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      guardarUsuarioMovil(data)
-      console.log(data)
-    })
-}
-
-function recuperarGrupoMovil() {
-  fetch('https://api.gservicetrack.com/groupmovil/raptortrack?limit=25&start=0&sort=group_name', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      // guardarGrupoMovil(data)
-      console.log(data)
-    })
-}
-
-function recuperarMoviles() {
-  fetch('https://api.gservicetrack.com/movils/raptortrack?limit=100&start=0&sort=movil', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      guardarMovil(data);
-      console.log(data)
-
-    })
-}
-
-function recuperarDispositivos() {
-  fetch('https://api.gservicetrack.com/devices/raptortrack?limit=25&start=0&sort=device', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      guardarDispositivos(data);
-      console.log(data)
-    })
-}
-
-function recuperarUsuarios() {
-  fetch('https://api.gservicetrack.com/users/raptortrack?limit=25&start=0&sort=name', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      guardarUsuarios(data)
-      console.log(data)
-    })
-}
-
-function recuperarPerfiles() {
-  fetch('https://api.gservicetrack.com/profiles/raptortrack?limit=25&start=0&sort=name', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      // guardarPerfiles(data)
-      console.log(data)
-    })
-}
-
-function recuperarGrupos() {
-  fetch('https://api.gservicetrack.com/groups/raptortrack', {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      // guardarGrupos(data)
-      console.log(data)
-    })
-}
-
-function ultimaPosicion(movil, fecha) {
-  fetch('https://api.gservicetrack.com/lastposition/raptortrack?limit=25&start=0&movil=' + movil + '&date=' + fecha, {
-    headers: {
-      "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-    }
-  })
-    .then(data => {
-      return data.json()
-    })
-    .then(data => {
-      console.log(data)
-    })
-}
-
-function convertir(json) {
-  var geojson = {
-    type: "FeatureCollection",
-    features: [],
-  };
-  for (i = 0; i < json.data.length; i++) {
-    geojson.features.push({
-      "type": "Feature",
-      "properties": {
-        "movil": json.data[i].movil,
-        "location": json.data[i].location,
-        "time": json.data[i].time,
-        "date": json.data[i].date,
-        "speed": json.data[i].speed,
-        "photo": json.data[i].photo,
-        "event": json.data[i].event,
-        "timestamp": json.data[i].timestamp,
-        "orientation": json.data[i].orientation,
-        "model": json.data[i].model,
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [json.data[i].lon, json.data[i].lat]
-      }
-    });
-  }
-  return geojson;
 }

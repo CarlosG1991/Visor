@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Visor Startel </title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="JSApi/Login.js"></script>
+  <script src="JSApi/Config.js"></script>
+  <script src="JSApi/Trayectoria.js"></script>
+  <script src="JSApi/xlsx.full.min.js"></script>
+  <script src="https://kit.fontawesome.com/aa1bc6f14e.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    $(function () {
+      let nivel = localStorage.getItem('Nivel');
+      if (nivel == "1") {
+        $("#DivContent").load("menu.html");
+      } else if (nivel == "2") {
+        $("#DivContent").load("menuAdmGrupo.html");
+      } else if (nivel == "3") {
+        $("#DivContent").load("menuUsuario.html");
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="DivContent"></div>
+  <div class="container">
+    <div id="pnlTabla" class="panel">
+
+      <p>Archivo de Paradas:</p>
+      <div class="custom-file mb-3">
+        <input type="file" class="custom-file-input" id="customFile" name="filename">
+        <label class="custom-file-label" for="customFile">Seleccionar Archivo</label>
+        </br>
+        <button type="button" onclick="cargar();" class="btn btn-secondary">Importar Datos</button>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    $(".custom-file-input").on("change", function () {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+    /* set up XMLHttpRequest */
+    function cargar() {
+      var url = oFileIn = document.getElementById('customFile').value;
+      console.log(url);
+
+      var oReq = new XMLHttpRequest();
+      oReq.open("GET", url, true);
+      oReq.responseType = "arraybuffer";
+
+      oReq.onload = function (e) {
+        var info = readData();
+        console.log(info);
+        
+        function readData() {
+          var arraybuffer = oReq.response;
+
+          /* convert data to binary string */
+          var data = new Uint8Array(arraybuffer);
+          var arr = new Array();
+          for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+          var bstr = arr.join("");
+
+          /* Call XLSX */
+          var workbook = XLSX.read(bstr, {
+          type: "binary"
+          });
+
+          /* DO SOMETHING WITH workbook HERE */
+          var first_sheet_name = workbook.SheetNames[0];
+          /* Get worksheet */
+          var worksheet = workbook.Sheets[first_sheet_name];
+          var info = XLSX.utils.sheet_to_json(worksheet, {
+          raw: true
+          })
+         return info;
+        }
+        
+      }
+
+      oReq.send();
+    }
+  </script>
+</body>
+
+</html>

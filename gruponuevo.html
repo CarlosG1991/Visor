@@ -15,10 +15,22 @@
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
   <script src="js/bootstrap.min.js"></script>
+  <script>
+    $(function () {
+      let nivel = localStorage.getItem('Nivel');
+      if (nivel == "1") {
+        $("#DivContent").load("menu.html");
+      } else if (nivel == "2") {
+        $("#DivContent").load("menuAdmGrupo.html");
+      } else if (nivel == "3") {
+        $("#DivContent").load("menuUsuario.html");
+      }
+    });
+  </script>
 </head>
 
 <body>
-  <!--#include file="menu.html" -->
+  <div id="DivContent"></div>
   <div class="container">
     <div id="pnlTabla" class="panel">
       <button type="button" onclick="crearGrupo();" class="btn btn-secondary">Crear Nuevo Grupo</button>
@@ -99,7 +111,7 @@
             } else {
               nivel = "Usuario";
             }
-            string += "<tr><td>" + preguntas[index].id + "</td>";
+            string += "<tr id='filaG" + preguntas[index].id + "'><td>" + preguntas[index].id + "</td>";
             string += "<td>" + preguntas[index].nombre + "</td>";
             string += "<td>" + preguntas[index].direccion + "</td>";
             string += "<td>" + preguntas[index].compania + "</td>";
@@ -107,7 +119,9 @@
             string += "<td>" + preguntas[index].representante + "</td>";
             string += "<td>" + preguntas[index].telefono + "</td>";
             string += "<td>" + nivel + "</td>";
-            string += "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarGr(" + preguntas[index]
+            string +=
+              "<td><div class='btn-group'><button type='button' class='btn btn-default' onclick='eliminarGr(" +
+              preguntas[index]
               .id + ")'><span class='far fa-trash-alt' aria-hidden='true'></span></button>";
             string += "<button type='button' class='btn btn-default'  onclick='editarGr(" + preguntas[index].id +
               ")'><span class='far fa-edit' aria-hidden='true'></span></button></div></td></tr>";
@@ -116,7 +130,6 @@
           $('#grupo').DataTable();
         });
     });
-  
   </script>
 </body>
 

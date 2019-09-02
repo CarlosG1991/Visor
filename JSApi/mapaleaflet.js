@@ -15,26 +15,26 @@ var map = L.map('map'),
 var icon = L.icon({
   iconUrl: 'img/iconos/Car1.png',
   iconSize: [38, 38],
-  iconAnchor: [9, 10],
-  popupAnchor: [-3, -76]
+  iconAnchor: [25, 30],
+  popupAnchor: [0, -30]
 });
 var icon2 = L.icon({
   iconUrl: 'img/iconos/Car1.png',
   iconSize: [30, 30],
-  iconAnchor: [9, 10],
-  popupAnchor: [-3, -76]
+  iconAnchor: [30, 30],
+  popupAnchor: [0, 0]
 });
 var icon3 = L.icon({
   iconUrl: 'img/iconos/Car1.png',
   iconSize: [25, 25],
-  iconAnchor: [9, 10],
-  popupAnchor: [-3, -76]
+  iconAnchor: [30, 30],
+  popupAnchor: [0, 0]
 });
 var icon4 = L.icon({
   iconUrl: 'img/iconos/Car1.png',
   iconSize: [20, 20],
-  iconAnchor: [9, 10],
-  popupAnchor: [-3, -76]
+  iconAnchor: [30, 30],
+  popupAnchor: [0, 0]
 });
 L.control.scale().addTo(map);
 
@@ -166,20 +166,20 @@ map.on('draw:created', function(e) {
 map.on('zoomend', function() {
   if (markers != null) {
     if (map.getZoom() <= 20 && map.getZoom() > 15) {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setIcon(icon);
+      for (var i = 0; i < markers.length; i++) {                        
+        markers[i].setIcon(icon);                
       }
     } else if (map.getZoom() <= 15 && map.getZoom() > 10) {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setIcon(icon2);
+      for (var i = 0; i < markers.length; i++) {                
+        markers[i].setIcon(icon2);               
       }
     } else if (map.getZoom() <= 10 && map.getZoom() > 5) {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setIcon(icon3);
+      for (var i = 0; i < markers.length; i++) {                        
+        markers[i].setIcon(icon3);        
       }
     } else if (map.getZoom() <= 5 && map.getZoom() >= 1) {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setIcon(icon4);
+      for (var i = 0; i < markers.length; i++) {                
+        markers[i].setIcon(icon4);          
       }
     }
   }
@@ -188,11 +188,9 @@ map.on('zoomend', function() {
 function initMapa() {
   if (window.localStorage["login"] == '0') {
     window.location.href = "index.html";
-  } else if (window.localStorage["login"] == '1') {
-    // iniciarMapa();
-    document.getElementById('nombreI').innerHTML = localStorage.getItem('Usuario');
+  } else if (window.localStorage["login"] == '1') {    
     cargarAsignados();
-    mapaAsignados();
+    //mapaAsignados();
     recuperarDatos();
   }
 }
@@ -267,8 +265,7 @@ function historial(id) {
   document.getElementById(id.id).style.display = "";
 }
 
-function cargarAsignados() {  
-  var alertas = document.getElementById('alertas');
+function cargarAsignados() {    
   var divPanel = '';
   var divDispositivos = '';
   divPanel += '<ul class="nav nav-tabs" id="myTab" role="tablist"><li class="nav-item">';
@@ -291,28 +288,21 @@ function cargarAsignados() {
     divDispositivos += '</div><input class="form-control" id="fdesde' + moviles_asignados[i].movil + '" type="date" id="example-date-input"><input type="time" id="hdesde' + moviles_asignados[i].movil + '" name="hora" step="3600"></div>';
     divDispositivos += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Fecha</span>';
     divDispositivos += '</div><input class="form-control" id="fhasta' + moviles_asignados[i].movil + '"  type="date" id="example-date-input"><input type="time" id="hhasta' + moviles_asignados[i].movil + '" name="hora"  step="3600"></div>';
-    divDispositivos += '<button type="button" onclick="historialVista(' + moviles_asignados[i].movil + ');" class="btn btn-secondary">Buscar</button><button type="button" onclick="cancelar(' + moviles_asignados[i].movil + ');" class="btn btn-danger">Cancelar</button></div>';
-    divDispositivos += "<button class='btn btn-lg'";
-    divDispositivos += 'onclick="javascript:historial(' + moviles_asignados[i].movil + ');"';
+    divDispositivos += '<button type="button" onclick="historialVista(' + moviles_asignados[i].movil + ');" class="btn btn-secondary">Buscar</button><button type="button" onclick="cancelar(' + moviles_asignados[i].movil + ');" class="btn btn-danger">Cancelar</button></div>';    
+    divDispositivos += '<button onclick="javascript:historial(' + moviles_asignados[i].movil + ');"';
     divDispositivos += "style='background-color:transparent;'><i class='fa fa-history'></i></button>";
-    divDispositivos += "<button class='btn btn-lg' onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
+    divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
+    divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
+    divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
+    divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
+    divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
+    divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
     
   }
   document.getElementById('home').innerHTML = divDispositivos;
 }
 
-function mapaAsignados() {
-  var hoy = new Date();
-  var dd = hoy.getDate();
-  if (dd < 10) {
-    dd = '0' + dd
-  }
-  var mm = hoy.getMonth() + 1;
-  if (mm < 10) {
-    mm = '0' + mm
-  }
-  var yyyy = hoy.getFullYear();
-  var fecha = yyyy + '-' + mm + '-' + dd;
+function mapaAsignados() {  
   if (moviles != '') {
     fetch('https://api.gservicetrack.com/lastposition/raptortrack?limit=25&start=0&movils=' + moviles + '&date=' + fecha, {
         headers: {

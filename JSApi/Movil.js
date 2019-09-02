@@ -56,7 +56,7 @@ function grabarMovil() {
                 document.getElementById('color').value = "";
                 document.getElementById('modelomo').value = "";
                 document.getElementById('propietario').value = "";
-                document.getElementById('tipo').value ="";
+                document.getElementById('tipo').value = "";
                 document.getElementById('ciudadPlaca').value = "";
                 document.getElementById('estado').value = "";
                 location.reload();
@@ -145,6 +145,7 @@ function eliminarMo(id) {
 
 function cargarUsuario(idGrupo) {
     var x = document.getElementById("selectUsuario");
+    var y = document.getElementById("selectUsuarioAsig");
     fetch('/web_service/Movil/obtenerUsuario.php?grupo=' + idGrupo)
         .then(data => {
             return data.json()
@@ -158,44 +159,136 @@ function cargarUsuario(idGrupo) {
             }
         });
 }
+function cargarUsuarioAsig(idGrupo) {
+    var y = document.getElementById("selectUsuarioAsig");
+    fetch('/web_service/Movil/obtenerUsuario.php?grupo=' + idGrupo)
+        .then(data => {
+            return data.json()
+        })
+        .then(data => {
+            for (var i = 0; i < data.length; i++) {
+                var option = document.createElement("option");
+                option.text = data[i].nombre;
+                option.value = data[i].id;
+                y.add(option);
+            }
+        });
+}
 function asginarMoviles() {
     var textos = "";
     var checkbox;
     var idMoviles = '';
     var idUsuario = document.getElementById('selectUsuario').value;
-    for (var i = 1; i < document.getElementById('device').rows.length; i++) {
-        for (var j = 0; j < 5; j++) {
-            if (j == 0) {
-                textos = document.getElementById('device').rows[i].cells[j].innerHTML;
-                checkbox = document.getElementById(textos);
-                if (checkbox.checked == true) {
-                    if (idMoviles == '') {
-                        idMoviles += textos;
-                    } else {
-                        idMoviles += ',' + textos;
+    var idUsuarioAsig = document.getElementById('selectUsuarioAsig').value;
+    if (idUsuario == idUsuarioAsig) {
+        alert("No puede seleccionar 2 veces al mismo usuario")
+    }else{        
+        var r = confirm("Esta seguro que desea cambiar de asignacion?");
+        if (r == true) {
+            for (var i = 1; i < document.getElementById('device').rows.length; i++) {
+                for (var j = 0; j < 5; j++) {
+                    if (j == 0) {
+                        textos = document.getElementById('device').rows[i].cells[j].innerHTML;
+                        checkbox = document.getElementById(textos);
+                        if (checkbox.checked == true) {
+                            if (idMoviles == '') {
+                                idMoviles += textos;
+                            } else {
+                                idMoviles += ',' + textos;
+                            }
+                        }
                     }
+                }
+            }
+            if (idUsuario == '') {
+                alert("Seleccione un Usuario")
+            } else {
+                if (idMoviles == '') {
+                    alert("Seleccione un Movil")
+                } else {
+                    fetch('/web_service/Asignacion/asignarMovil.php?idUsuario=' + idUsuario + '&idMovil=' + idMoviles)
+                        .then(data => {
+                            return data.json()
+                        })
+                        .then(data => {
+                            if (data.length > 0) {
+                                alert("La informacion no se a podido guardar");
+                            } else {
+                                alert("La informacion se a guardardado");
+                                location.reload();
+                            }
+                        });
                 }
             }
         }
     }
-    if (idUsuario == '') {
-        alert("Seleccione un Usuario")
-    } else {
-        if (idMoviles == '') {
-            alert("Seleccione un Movil")
-        } else {
-            fetch('/web_service/Asignacion/asignarMovil.php?idUsuario=' + idUsuario + '&idMovil=' + idMoviles)
-                .then(data => {
-                    return data.json()
-                })
-                .then(data => {
-                    if (data.length > 0) {
-                        alert("La informacion no se a podido guardar");
-                    } else {
-                        alert("La informacion se a guardardado");
-                        location.reload();
+    
+}
+function asignarMovilGrupo(){
+    var NombreGrupo = document.getElementById('nombreGrupo').value;
+    var idMoviles = '';
+    var checkbox;
+    fetch('/web_service/Asignacion/ValidarGrupo.php?nombre=' + NombreGrupo)
+        .then(data => {
+            return data.json()
+        })
+        .then(data => {
+            if (data.length > 0) {
+                for (var i = 1; i < document.getElementById('device').rows.length; i++) {
+                    for (var j = 0; j < 5; j++) {
+                        if (j == 0) {
+                            textos = document.getElementById('device').rows[i].cells[j].innerHTML;
+                            checkbox = document.getElementById(textos);
+                            if (checkbox.checked == true) {
+                                if (idMoviles == '') {
+                                    idMoviles += textos;
+                                } else {
+                                    idMoviles += ',' + textos;
+                                }
+                            }
+                        }
                     }
-                });
-        }
-    }
+                }
+                for (let index = 0; index < data.length; index++) {
+                    fetch('/web_service/Asignacion/asignarMovilGrupo.php?idGrupo=' + data[index].id + '&idMovil=' + idMoviles)
+                        .then(data => {
+                            return data.json()
+                        })
+                        .then(data => {
+                            if (data.length > 0) {
+                                alert("La informacion no se a podido guardar");
+                            } else {
+                                alert("La informacion se a guardardado");
+                                location.reload();
+                            }
+                        });                       
+                }
+            } else {
+                alert("No existe el Grupo mensionado");
+            }
+        });
+}
+
+function cambioUsuario() {
+    var tabla = document.getElementById("bodyDevice");
+    var idUsuario = document.getElementById("selectUsuarioAsig").value;
+    tabla.innerHTML = '';
+    var idGrupo = localStorage.getItem('IdGrupo');
+    $.getJSON('/web_service/Movil/obtenerMovilAsignar.php?idGrupo=' + idGrupo + '&idUsuario=' + idUsuario, {
+        format: "json"
+    },
+        function (preguntas) {
+            var string = "";
+            for (let index = 0; index < preguntas.length; index++) {
+                string += "<tr><td>" + preguntas[index].id + "</td>";
+                string += "<td>" + preguntas[index].alias + "</td>";
+                string += "<td>" + preguntas[index].device + "</td>";
+                string += "<td>" + preguntas[index].movil + "</td>";
+                string +=
+                    "<td><div class='form-check form-check-inline'><input type='checkbox' class='form-check-input' id='" +
+                    preguntas[index].id + "'></div></td></tr>";
+            }
+            tabla.innerHTML = string;
+            //$('#device').DataTable();
+        });
 }

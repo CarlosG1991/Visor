@@ -15,13 +15,22 @@
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
   <script src="js/bootstrap.min.js"></script>
-
+  <script>
+    $(function () {
+      let nivel = localStorage.getItem('Nivel');
+      if (nivel == "1") {
+        $("#DivContent").load("menu.html");
+      } else if (nivel == "2") {
+        $("#DivContent").load("menuAdmGrupo.html");
+      } else if (nivel == "3") {
+        $("#DivContent").load("menuUsuario.html");
+      }
+    });
+  </script>
 </head>
 
-<!-- <body onload="cargarUsuarios()"> -->
-
 <body>
-  <!--#include file="menu.html" -->
+  <div id="DivContent"></div>
   <div class="container">
     <div id="pnlTabla" class="panel">
       <button type="button" onclick="crearMovil();" class="btn btn-secondary">Crear Nuevo Movil</button>
@@ -108,7 +117,7 @@
       <div class="form-group">
         <label for="chasis">Chasis</label>
         <input type="text" class="form-control" id="chasis" name="chasis">
-      </div>      
+      </div>
       <div class="form-group">
         <label for="color">Color</label>
         <input type="text" class="form-control" id="color" name="color">
@@ -121,10 +130,10 @@
         <label for="propietario">Propietario</label>
         <input type="text" class="form-control" id="propietario" name="propietario">
       </div>
-       <div class="form-group">
-         <label for="tipo">Tipo</label>
-         <input type="text" class="form-control" id="tipo" name="tipo">
-       </div>
+      <div class="form-group">
+        <label for="tipo">Tipo</label>
+        <input type="text" class="form-control" id="tipo" name="tipo">
+      </div>
       <div class="form-group">
         <label for="ciudadPlaca">Ciudad de la placa</label>
         <input type="text" class="form-control" id="ciudadPlaca" name="ciudadPlaca">

@@ -11,6 +11,14 @@
   <link href="css/leaflet-distance-marker.css" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <link rel="stylesheet" href="css/leaflet-routing-machine.css" />
+  <style type="text/css">
+    .leaflet-control-layers-expanded1 {
+      height: 300px;
+      width: 350px;
+      overflow-y: scroll;
+      overflow-x: scroll;
+    }
+  </style>
 
   <script src="JSApi/Config.js"></script>
   <script src="JSApi/Login.js"></script>
@@ -28,6 +36,7 @@
   <script src="leafletDraw/Leaflet.draw.js"></script>
   <script src="leafletDraw/Leaflet.Draw.Event.js"></script>
   <link rel="stylesheet" href="leafletDraw/leaflet.draw.css" />
+
 
   <script src="leafletDraw/Toolbar.js"></script>
   <script src="leafletDraw/Tooltip.js"></script>
@@ -70,7 +79,7 @@
         $("#DivContent").load("menu.html");
       } else if (nivel == "2") {
         $("#DivContent").load("menuAdmGrupo.html");
-      } else if (nivel == "3"){
+      } else if (nivel == "3") {
         $("#DivContent").load("menuUsuario.html");
       }
     });
@@ -81,43 +90,51 @@
   <div id="DivContent"></div>
   <div id="map">
   </div>
-  <a onclick="guardarMapa();" id='export'>Guardar</a>
-  <div id="controls">
-    <div class="wrapper">
-      <div id="panel-scrolling" class="panel">
-        <div class="panel-heading">
-          <h3 class="panel-title">Alertas</h3>
-        </div>
-        <div class="panel-body" id="alertas">
+  <!--
+    <a onclick="guardarMapa();" id='export'>Guardar</a>
+  -->
+  <div id="panelAlertas" class="leaflet-control-layers leaflet-control leaflet-control-layers-expanded1">
+    <div id="alertas">
+    </div>
+  </div>
+  <div id="panelFollow" style="display: None;" class="leaflet-control-layers leaflet-control leaflet-control-layers-expanded1">
+    <h1>Siguiente Parada:</h1>
+    <h6 id="paradaFollow"></h6>
+    <h1>Distancia Parada:</h1>
+    <h6 id="distanciaFollow"></h6>
+    <h1>Tiempo estimado:</h1>
+    <h6 id="tiempoFollow"></h6>
+  </div>
+  <div id="tablaHistorial" style="display:None;" class="leaflet-control-layers leaflet-control leaflet-control-layers-expanded1">
+    <div class="row" >
+      <div class="col-12">
+        <div class="panel-scrolling">
+          <div class="panel-heading">
+          </div>
+          <div class="panel-body" style="height:50px;">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Unidad</th>
+                  <th scope="col">Latitud</th>
+                  <th scope="col">Longitud</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Alerta</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla">
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row" id="tablaHistorial" style="display:None;">
-    <div class="col-12">
-      <div class="panel-scrolling">
-        <div class="panel-heading">
-        </div>
-        <div class="panel-body" style="height:50px;">
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Unidad</th>
-                <th scope="col">Latitud</th>
-                <th scope="col">Longitud</th>
-                <th scope="col">Odometro</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Alerta</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTabla">
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+
+
+
+
   <script src="JSApi/mapaleaflet.js"></script>
   <script src="js/leaflet-routing-machine.js"></script>
   <!-- <script src="js/leaflet-routing-machine.min.js"></script> -->

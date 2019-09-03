@@ -26,7 +26,7 @@ function guardarMapa() {
   // alert("hola:" + drawnItems);
 }
 // *****************************Agregar Marker leaflet****************************
-function addMarker(location, imei,angulo) {  
+function addMarker(location, imei, angulo) {
   var contentString = '<div id="content">' +
     '<div id="siteNotice">' +
     '</div>' +
@@ -36,14 +36,12 @@ function addMarker(location, imei,angulo) {
     '</p>' +
     '</div>' +
     '</div>';
-  
-  marker = L.marker(location, {    
+
+  marker = L.marker(location, {
     title: imei,
     rotationAngle: angulo,
     draggable: true
   }).bindPopup(contentString).addTo(map);
-  
-  //marker.style.transform = "rotate("+90+"deg)";
   markers.push(marker);
 }
 //*****************************Centrar Mapa a Markers*******************************
@@ -64,11 +62,21 @@ function clearMarkers(ime) {
   }
 }
 
-function cambiarPosition(latlng, imei,angulo) {
+function cambiarPosition(latlng, imei, angulo) {
+  var contentString = '<div id="content">' +
+    '<div id="siteNotice">' +
+    '</div>' +
+    '<div id="bodyContent">' +
+    '<p><a onclick="javascript:follow(movil)">' +
+    'Cambio Vehiculo</a> ' +
+    '</p>' +
+    '</div>' +
+    '</div>';
   for (var i = 0; i < markers.length; i++) {
     if (markers[i].options.title == imei) {
       markers[i].setLatLng(latlng);
       markers[i].setRotationAngle(angulo)
+      marker.bindPopup(contentString).openPopup();
     }
   }
 }
@@ -87,10 +95,10 @@ function deleteMarkers() {
 }
 // *********************************************************************************
 // **********************************Obtener datos desde la base********************
-function obtenerDatos(idMovil,item){
+function obtenerDatos(idMovil, item) {
   var contenedor = document.getElementById('profile');
-  var div, a,h5;
-  fetch('/web_service/Mapa/obtenerDatos2.php?imei=' + idMovil)
+  var div, a, h5;
+  fetch('/web_service/Mapa/obtenerPosicion.php?imei=' + idMovil)
     .then(data => {
       return data.json()
     })
@@ -103,30 +111,30 @@ function obtenerDatos(idMovil,item){
         };
         div = document.createElement('div');
         a = document.createElement('a');
-        h5 = document.createElement('h20');
+        h5 = document.createElement('h10');
         if (!document.getElementById(data[i].unit + '-' + data[i].alert)) {
           div.setAttribute('class', 'col-sm-12');
           div.setAttribute('id', data[i].unit + '-' + data[i].alert);
           contenido = document.createTextNode(data[i].alert);
-          h5.appendChild(contenido);          
+          h5.appendChild(contenido);
           a.appendChild(h5);
           a.setAttribute('onclick', 'acercar(' + data[i].lat / 1000000 + ',' + data[i].long / 1000000 + ')');
           div.appendChild(a);
           contenedor.appendChild(div);
         }
-        if(item==1){
+        if (item == 1) {
           addMarker(outerCoords, data[i].unit, data[i].orientacion);
-        }else{
+        } else {
           cambiarPosition(outerCoords, data[i].unit, data[i].orientacion);
-        }        
+        }
       }
-      if(item==1){
+      if (item == 1) {
         localizar();
-      }      
+      }
     })
 }
 function recuperarDatos() {
-  var imei = '';  
+  var imei = '';
   traAsiganada = JSON.parse(localStorage.getItem("moviles"));
   for (var i = 0; i < traAsiganada.length; i++) {
     if (i == 0) {
@@ -134,16 +142,16 @@ function recuperarDatos() {
     } else {
       imei += "," + "'" + traAsiganada[i].id + "'";
     }
-  }  
-  obtenerDatos(imei,1);
-  setInterval(function () {    
-    if (control == 0) {               
-      obtenerDatos(imei,0);
+  }
+  obtenerDatos(imei, 1);
+  setInterval(function () {
+    if (control == 0) {
+      obtenerDatos(imei, 0);
     }
   }, 20000);
 }
 // *********************************************************
-function tracking(vehiculo){
+function tracking(vehiculo) {
   fetch('https://api.gservicetrack.com/remotecommand/raptortrack', {
     method: 'POST',
     headers: {
@@ -157,47 +165,40 @@ function tracking(vehiculo){
 function follow(movil) {
   control = 1;
   ctrfollow = 0;
+  document.getElementById("panelAlertas").style.display = "None";
+  document.getElementById('panelFollow').style.display = "";
+  tracking(movil);
   setInterval(function () {
-    enviarComando(movil);
-    var fecha = currentdate.getFullYear() + "-" + currentdate.getMonth() +
-      "-" + currentdate.getDay() + "T" +
-      currentdate.getHours() + ":" +
-      currentdate.getMinutes() + ":" + currentdate.getSeconds();
-    fetch('https://api.gservicetrack.com/follow/raptortrack?limit=25&start=0&movil=' + movil.id + '&date>=' + fecha, {
-      headers: {
-        "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-      }
-    })
+    fetch('/web_service/Mapa/obtenerTracking.php?movil=' + movil.id)
       .then(data => {
         return data.json()
       })
       .then(data => {
-        console.log('Created Gist:', data)
-        for (i = 0; i < data.data.length; i++) {
+        for (i = 0; i < data.length; i++) {
+          let lati = data[i].lat / 1000000;
+          let longi = data[i].long / 1000000;
           var outerCoords = {
-            lat: data.data[i].lat,
-            lng: data.data[i].lon
+            lat: lati,
+            lng: longi
           };
           if (ctrfollow == 0) {
             deleteMarkers();
-            addMarker(outerCoords);
-            calculoDistancia(data.data[i].lat, data.data[i].lon);
+            addMarker(outerCoords, data[i].unit, data[i].orientacion);
+            calculoDistancia(lati, longi);          
           } else {
-            calculoDistancia(data.data[i].lat, data.data[i].lon);
+            calculoDistancia(lati, longi);
             cambiarPositionFollow(outerCoords);
           }
         }
         ctrfollow = 1;
-        localizar();
       })
-  }, 10000);
+  }, 5000);
 }
 
 function cambiarDistancia(lat, lng, latFin, lngFin) {
   controlR.spliceWaypoints(0, 1, L.latLng(lat, lng));
   controlR.spliceWaypoints(1, 1, L.latLng(latFin, lngFin));
   map.closePopup();
-  // waypoints = [];
   for (var i = 0; i < controlR._routes.length; i++) {
     waypoints.push({
       latLng: controlR._routes[i].waypoints[i].latLng
@@ -206,7 +207,6 @@ function cambiarDistancia(lat, lng, latFin, lngFin) {
   if (waypoints.length >= 2) {
     router.route(waypoints, function (err, routes) {
       if (err) {
-        // alert(err);
         console.log(err);
       } else {
         console.log(routes[0].summary);
@@ -249,7 +249,7 @@ function distancia(lat, lng, latF, lngF) {
   })).addTo(map);
   L.Routing.errorControl(controlR).addTo(map);
 }
-function enviarComando(){  
+function enviarComando() {
   fetch('https://api.gservicetrack.com/remotecommand/raptortrack', {
     method: 'POST',
     headers: {
@@ -258,7 +258,7 @@ function enviarComando(){
       'Content-Type': 'application/json'
     },
     body: "{\r\n    \"movil\": \"FV_01\",\r\n    \"command\": \"1\"\r\n  }"
-  });  
+  });
 }
 
 function recuperarHistorial(bearer_token, movil, date) {

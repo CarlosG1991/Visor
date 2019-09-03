@@ -9,46 +9,44 @@ var coords = [];
 var marker;
 var overlayMaps = {};
 var shape_for_db;
-var map = L.map('map'),
+var map = L.map('map', {
+  zoomControl: false
+}),
   drawnItems = L.featureGroup().addTo(map);
-
+new L.Control.Zoom({ position: 'topright' }).addTo(map); 
 var icon = L.icon({
   iconUrl: 'img/iconos/Car1.png',
-  iconSize: [38, 38],
-  iconAnchor: [25, 30],
-  popupAnchor: [0, -30]
+  iconSize: [38, 38],  
 });
 var icon2 = L.icon({
   iconUrl: 'img/iconos/Car1.png',
-  iconSize: [30, 30],
-  iconAnchor: [30, 30],
-  popupAnchor: [0, 0]
+  iconSize: [30, 30],  
 });
 var icon3 = L.icon({
   iconUrl: 'img/iconos/Car1.png',
   iconSize: [25, 25],
-  iconAnchor: [30, 30],
-  popupAnchor: [0, 0]
+  
 });
 var icon4 = L.icon({
   iconUrl: 'img/iconos/Car1.png',
   iconSize: [20, 20],
-  iconAnchor: [30, 30],
-  popupAnchor: [0, 0]
+  
 });
 L.control.scale().addTo(map);
-
-var calculoDistancia = function(lati, longi) {
+var calculoDistancia = function (lati, longi) {
   var flag = 0;
+  var parada='';
+  var tiempo=0;
   var distI = 0,
     distF = 0;
   var latF, longF;
   for (const prop in overlayMaps) {
-    overlayMaps[prop].eachLayer(function(layer) {
+    overlayMaps[prop].eachLayer(function (layer) {       
       if (flag == 0) {
         distI = getKilometros(lati, longi, layer._latlng.lat, layer._latlng.lng);
         latF = layer._latlng.lat;
         longF = layer._latlng.lng;
+        parada = layer._popup._content;
         flag = 1;
       } else {
         distF = getKilometros(lati, longi, layer._latlng.lat, layer._latlng.lng);
@@ -56,21 +54,26 @@ var calculoDistancia = function(lati, longi) {
           distI = getKilometros(lati, longi, layer._latlng.lat, layer._latlng.lng);
           latF = layer._latlng.lat;
           longF = layer._latlng.lng;
+          parada = layer._popup._content;
         }
       }
     });
   }
+  tiempo = (distI/30)*60;
   if (ctrfollow == 0) {
-    alert("Parada mas cercana a: " + distI);
     distancia(lati, longi, latF, longF);
-  } else {
-    alert("Parada mas cercana a: " + distI);
+    document.getElementById('paradaFollow').innerHTML = parada;
+    document.getElementById('distanciaFollow').innerHTML = distI;
+    document.getElementById('tiempoFollow').innerHTML = tiempo;  
+  } else {           
     cambiarDistancia(lati, longi, latF, longF);
+    document.getElementById('paradaFollow').innerHTML = parada;
+    document.getElementById('distanciaFollow').innerHTML = distI;
+    document.getElementById('tiempoFollow').innerHTML = tiempo;
   }
-
 }
-var getKilometros = function(lat1, lon1, lat2, lon2) {
-  rad = function(x) {
+var getKilometros = function (lat1, lon1, lat2, lon2) {
+  rad = function (x) {
     return x * Math.PI / 180;
   }
   var R = 6378.137; //Radio de la tierra en km
@@ -86,8 +89,7 @@ var osmBase = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap<\/a> contributors'
 });
 osmBase.addTo(map);
-mapLink = '<a href="http://www.esri.com/">Esri</a>';
-wholink = 'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+
 traAsiganada = JSON.parse(localStorage.getItem("trayectoria"));
 for (var i = 0; i < traAsiganada.length; i++) {
   if (i == 0) {
@@ -110,9 +112,7 @@ fetch('/web_service/Mapa/obtenerParadas.php?trayectoria_id=' + idTra)
     var busIcon = L.icon({
       iconUrl: 'img/iconos/bus.png',
       iconSize: [38, 38], // size of the icon
-    });
-    console.log(data);
-
+    });    
     var nombreTra = "";
     for (var i = 0; i < data.length; i++) {
       var mr = [];
@@ -126,16 +126,17 @@ fetch('/web_service/Mapa/obtenerParadas.php?trayectoria_id=' + idTra)
       overlayMaps[nombreTra] = layerGroup;
     }
     L.control.layers(baseMaps, overlayMaps, {
-      position: 'topleft', // 'topleft', 'bottomleft', 'bottomright'
+      position: 'topright', // 'topleft', 'bottomleft', 'bottomright'
       collapsed: true // true
     }, {
-      'drawlayer': drawnItems
-    }, {
-      position: 'topleft',
-      collapsed: false
-    }).addTo(map);
+        'drawlayer': drawnItems
+      }, {
+        position: 'topright',
+        collapsed: false
+      }).addTo(map);
   });
 map.addControl(new L.Control.Draw({
+  position: 'topright',
   edit: {
     featureGroup: drawnItems,
     poly: {
@@ -150,11 +151,11 @@ map.addControl(new L.Control.Draw({
   }
 }));
 
-map.on(L.Draw.Event.CREATED, function(event) {
+map.on(L.Draw.Event.CREATED, function (event) {
   var layer = event.layer;
   drawnItems.addLayer(layer);
 });
-map.on('draw:created', function(e) {
+map.on('draw:created', function (e) {
   layer = e.layer;
   console.log(e);
   if (e.layerType === 'marker') {
@@ -163,23 +164,23 @@ map.on('draw:created', function(e) {
     console.log(e);
   }
 });
-map.on('zoomend', function() {
+map.on('zoomend', function () {
   if (markers != null) {
     if (map.getZoom() <= 20 && map.getZoom() > 15) {
-      for (var i = 0; i < markers.length; i++) {                        
-        markers[i].setIcon(icon);                
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon);
       }
     } else if (map.getZoom() <= 15 && map.getZoom() > 10) {
-      for (var i = 0; i < markers.length; i++) {                
-        markers[i].setIcon(icon2);               
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon2);
       }
     } else if (map.getZoom() <= 10 && map.getZoom() > 5) {
-      for (var i = 0; i < markers.length; i++) {                        
-        markers[i].setIcon(icon3);        
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon3);
       }
     } else if (map.getZoom() <= 5 && map.getZoom() >= 1) {
-      for (var i = 0; i < markers.length; i++) {                
-        markers[i].setIcon(icon4);          
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setIcon(icon4);
       }
     }
   }
@@ -188,9 +189,8 @@ map.on('zoomend', function() {
 function initMapa() {
   if (window.localStorage["login"] == '0') {
     window.location.href = "index.html";
-  } else if (window.localStorage["login"] == '1') {    
+  } else if (window.localStorage["login"] == '1') {
     cargarAsignados();
-    //mapaAsignados();
     recuperarDatos();
   }
 }
@@ -206,19 +206,16 @@ function cancelar(id) {
 function historialVista(movil) {
   control = 1;
   deleteMarkers();
-  var flightPlanCoordinates = [];
-  var coordenadaInicio, coordenadaFinal;
-  var inilat, inilong, finlat, finlog;
   var fdesde = document.getElementById('fdesde' + movil.id).value;
   var hdesde = document.getElementById('hdesde' + movil.id).value;
   var fhasta = document.getElementById('fhasta' + movil.id).value;
   var hhasta = document.getElementById('hhasta' + movil.id).value;
   var desde = fdesde + ' ' + hdesde;
   var hasta = fhasta + ' ' + hhasta;
-  var tr, td1, td2, td3, td4, td5, td6, contenido;
+  var tr, td1, td2, td3, td5, td6, contenido;
   var tabla = document.getElementById("cuerpoTabla");
 
-  fetch('/web_service/obtenerHistorial.php?movil=' + movil.id + '&desde=' + desde + '&hasta=' + hasta)
+  fetch('/web_service/Mapa/obtenerHistorial.php?movil=' + movil.id + '&desde=' + desde + '&hasta=' + hasta)
     .then(data => {
       return data.json()
     })
@@ -230,7 +227,6 @@ function historialVista(movil) {
         td1 = document.createElement('td');
         td2 = document.createElement('td');
         td3 = document.createElement('td');
-        td4 = document.createElement('td');
         td5 = document.createElement('td');
         td6 = document.createElement('td');
         var outerCoords = {
@@ -246,9 +242,6 @@ function historialVista(movil) {
         contenido = document.createTextNode(data[i].long / 1000000);
         td3.appendChild(contenido);
         tr.appendChild(td3);
-        contenido = document.createTextNode(data[i].odometro);
-        td4.appendChild(contenido);
-        tr.appendChild(td4);
         contenido = document.createTextNode(data[i].fecha);
         td5.appendChild(contenido);
         tr.appendChild(td5);
@@ -265,7 +258,7 @@ function historial(id) {
   document.getElementById(id.id).style.display = "";
 }
 
-function cargarAsignados() {    
+function cargarAsignados() {
   var divPanel = '';
   var divDispositivos = '';
   divPanel += '<ul class="nav nav-tabs" id="myTab" role="tablist"><li class="nav-item">';
@@ -288,7 +281,7 @@ function cargarAsignados() {
     divDispositivos += '</div><input class="form-control" id="fdesde' + moviles_asignados[i].movil + '" type="date" id="example-date-input"><input type="time" id="hdesde' + moviles_asignados[i].movil + '" name="hora" step="3600"></div>';
     divDispositivos += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Fecha</span>';
     divDispositivos += '</div><input class="form-control" id="fhasta' + moviles_asignados[i].movil + '"  type="date" id="example-date-input"><input type="time" id="hhasta' + moviles_asignados[i].movil + '" name="hora"  step="3600"></div>';
-    divDispositivos += '<button type="button" onclick="historialVista(' + moviles_asignados[i].movil + ');" class="btn btn-secondary">Buscar</button><button type="button" onclick="cancelar(' + moviles_asignados[i].movil + ');" class="btn btn-danger">Cancelar</button></div>';    
+    divDispositivos += '<button type="button" onclick="historialVista(' + moviles_asignados[i].movil + ');" class="btn btn-secondary">Buscar</button><button type="button" onclick="cancelar(' + moviles_asignados[i].movil + ');" class="btn btn-danger">Cancelar</button></div>';
     divDispositivos += '<button onclick="javascript:historial(' + moviles_asignados[i].movil + ');"';
     divDispositivos += "style='background-color:transparent;'><i class='fa fa-history'></i></button>";
     divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
@@ -297,30 +290,7 @@ function cargarAsignados() {
     divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
     divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button>";
     divDispositivos += "<button onclick='follow(" + moviles_asignados[i].movil + ")' style='background-color:transparent;'><i class='fa fa-search-location'></i></button></div>";
-    
+
   }
   document.getElementById('home').innerHTML = divDispositivos;
-}
-
-function mapaAsignados() {  
-  if (moviles != '') {
-    fetch('https://api.gservicetrack.com/lastposition/raptortrack?limit=25&start=0&movils=' + moviles + '&date=' + fecha, {
-        headers: {
-          "x-api-key": "dZ7oCt60FZ2UtPD7z8dpl6tnCgw03pDj1lMU9mep"
-        }
-      })
-      .then(data => {
-        return data.json()
-      })
-      .then(data => {
-        console.log('Cargando Vist:', data)
-        for (i = 0; i < data.data.length; i++) {
-          var outerCoords = [data.data[i].latitud,
-            data.data[i].longitud
-          ];
-          addMarker(outerCoords, data.data[i].device);
-        }
-        localizar();
-      })
-  }
 }
